@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wakewake/server_input.dart';
 
 void main() {
   runApp(const WakeWake());
@@ -68,27 +67,27 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Column(children: <Widget>[
-        ServerInput(
-          value: macAddress,
-          label: "MAC Address",
-          onChanged: (value) {
-            setState(() {
-              macAddress = value;
-            });
-          },
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[a-fA-F0-9-]')),
-            _MacAddressInputFormatter(),
-          ],
+        Container(
+          padding: const EdgeInsets.all(20.0),
+          child: MacAddressTextField(
+            onChanged: (value) {
+              setState(() {
+                macAddress = value;
+              });
+            },
+            macAddress: macAddress,
+          ),
         ),
-        ServerInput(
-          value: ipAddress,
-          label: "IP Address",
-          onChanged: (value) {
-            setState(() {
-              ipAddress = value;
-            });
-          },
+        Container(
+          padding: const EdgeInsets.all(20.0),
+          child: IPAddressTextField(
+            onChanged: (value) {
+              setState(() {
+                ipAddress = value;
+              });
+            },
+            ipAddress: ipAddress,
+          ),
         ),
         ElevatedButton(
           onPressed: _wakewake,
@@ -124,6 +123,72 @@ void sendMagicPacket(String macAddress, String ipAddress) {
   });
 }
 
+class IPAddressTextField extends StatefulWidget {
+  final ValueChanged<String>? onChanged;
+  final String ipAddress;
+
+  const IPAddressTextField({Key? key, this.onChanged, required this.ipAddress}) : super(key: key);
+
+  @override
+  State<IPAddressTextField> createState() => _IPAddressTextFieldState();
+}
+
+class _IPAddressTextFieldState extends State<IPAddressTextField> {
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      onChanged: widget.onChanged,
+      controller: TextEditingController.fromValue(
+        TextEditingValue(
+            text: widget.ipAddress,
+            selection: TextSelection(
+              baseOffset: widget.ipAddress.length,
+              extentOffset: widget.ipAddress.length,
+            )),
+      ),
+      decoration: const InputDecoration(
+        labelText: 'IP Address',
+      ),
+    );
+  }
+}
+
+class MacAddressTextField extends StatefulWidget {
+  const MacAddressTextField({Key? key, required this.onChanged, required this.macAddress})
+      : super(key: key);
+
+  final ValueChanged<String> onChanged;
+  final String macAddress;
+
+  @override
+  State<MacAddressTextField> createState() => _MacAddressTextFieldState();
+}
+
+class _MacAddressTextFieldState extends State<MacAddressTextField> {
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      onChanged: widget.onChanged,
+      controller: TextEditingController.fromValue(
+        TextEditingValue(
+            text: widget.macAddress,
+            selection: TextSelection(
+              baseOffset: widget.macAddress.length,
+              extentOffset: widget.macAddress.length,
+            )),
+      ),
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'[a-fA-F0-9-]')),
+        _MacAddressInputFormatter(),
+      ],
+      decoration: const InputDecoration(
+        labelText: 'MAC Address',
+      ),
+    );
+  }
+}
+
+//TO DO - fix textfield cursor position issue
 class _MacAddressInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
