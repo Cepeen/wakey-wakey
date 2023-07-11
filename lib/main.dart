@@ -134,10 +134,18 @@ class IPAddressTextField extends StatefulWidget {
 }
 
 class _IPAddressTextFieldState extends State<IPAddressTextField> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(text: widget.ipAddress);
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: TextEditingController(text: widget.ipAddress),
+      controller: controller,
       decoration: const InputDecoration(
         labelText: 'IP Address',
       ),
@@ -158,10 +166,18 @@ class MacAddressTextField extends StatefulWidget {
 }
 
 class _MacAddressTextFieldState extends State<MacAddressTextField> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(text: widget.macAddress);
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: TextEditingController(text: widget.macAddress),
+      controller: controller,
       onChanged: widget.onChanged,
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'[a-fA-F0-9-]')),
