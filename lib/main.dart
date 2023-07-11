@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const WakeWake());
@@ -21,9 +22,6 @@ class WakeWake extends StatelessWidget {
   }
 }
 
-String macAddress = "macadress";
-String ipAddress = 'ipadress';
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -35,9 +33,31 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final int port = 9;
+  String macAddress = '';
+  String ipAddress = '';
+
+  @override
+  void initState() {
+    super.initState();
+    loadPreferences();
+  }
+
+  Future<void> savePreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('macAddress', macAddress);
+    prefs.setString('ipAddress', ipAddress);
+  }
+
+  Future<void> loadPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      macAddress = (prefs.getString('macAddress') ?? '');
+      ipAddress = (prefs.getString('ipAddress') ?? '');
+    });
+  }
 
   void _wakewake() {
-    sendMagicPacket(macAddress); //target mac
+    sendMagicPacket(macAddress, ipAddress); //target mac
   }
 
   @override
@@ -55,6 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 macAddress = value;
               });
             },
+            macAddress: macAddress,
           ),
         ),
         Container(
@@ -65,18 +86,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 ipAddress = value;
               });
             },
+            ipAddress: ipAddress,
           ),
         ),
         ElevatedButton(
           onPressed: _wakewake,
           child: const Text('Wake! Wake!'),
+        ),
+        ElevatedButton(
+          onPressed: savePreferences,
+          child: const Text('Save'),
         )
       ]),
     );
   }
 }
 
-void sendMagicPacket(String macAddress) {
+void sendMagicPacket(String macAddress, String ipAddress) {
   final List<int> macBytes = macAddress.split(':').map((e) => int.parse(e, radix: 16)).toList();
   final List<int> packet = [];
 
@@ -97,31 +123,46 @@ void sendMagicPacket(String macAddress) {
   });
 }
 
-class IPAddressTextField extends StatelessWidget {
+class IPAddressTextField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
+  final String ipAddress;
 
-  const IPAddressTextField({Key? key, this.onChanged}) : super(key: key);
+  const IPAddressTextField({Key? key, this.onChanged, required this.ipAddress}) : super(key: key);
 
+  @override
+  State<IPAddressTextField> createState() => _IPAddressTextFieldState();
+}
+
+class _IPAddressTextFieldState extends State<IPAddressTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: TextEditingController(text: widget.ipAddress),
       decoration: const InputDecoration(
         labelText: 'IP Address',
       ),
-      onChanged: onChanged,
+      onChanged: widget.onChanged,
     );
   }
 }
 
-class MacAddressTextField extends StatelessWidget {
-  const MacAddressTextField({Key? key, required this.onChanged}) : super(key: key);
+class MacAddressTextField extends StatefulWidget {
+  const MacAddressTextField({Key? key, required this.onChanged, required this.macAddress})
+      : super(key: key);
 
   final ValueChanged<String> onChanged;
+  final String macAddress;
 
+  @override
+  State<MacAddressTextField> createState() => _MacAddressTextFieldState();
+}
+
+class _MacAddressTextFieldState extends State<MacAddressTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      onChanged: onChanged,
+      controller: TextEditingController(text: widget.macAddress),
+      onChanged: widget.onChanged,
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'[a-fA-F0-9-]')),
         _MacAddressInputFormatter(),
@@ -133,6 +174,7 @@ class MacAddressTextField extends StatelessWidget {
   }
 }
 
+//TO DO - fix textfield cursor position issue
 class _MacAddressInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
