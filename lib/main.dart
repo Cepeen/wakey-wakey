@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:wakewake/server_list.dart';
-
+import 'hosts.dart';
+import 'package:provider/provider.dart';
+import 'server_list.dart';
 
 void main() {
-  runApp(const WakeWake());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => HostListProvider(),
+      child: const WakeWake(),
+    ),
+  );
 }
 
 class WakeWake extends StatelessWidget {
@@ -20,5 +26,14 @@ class WakeWake extends StatelessWidget {
         title: '',
       ),
     );
+  }
+}
+
+class HostListProvider extends ChangeNotifier {
+  List<Hosts> savedHosts = [];
+
+  void removeHost(Hosts host) {
+    savedHosts.remove(host);
+    notifyListeners();
   }
 }

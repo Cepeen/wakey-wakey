@@ -1,10 +1,13 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'hosts.dart';
-import 'server_list.dart';
+import 'package:provider/provider.dart';
+import 'main.dart';
+
+
 class AddHost extends StatefulWidget {
   const AddHost({Key? key, required this.title, this.host}) : super(key: key);
 
@@ -20,49 +23,44 @@ class _AddHostState extends State<AddHost> {
   String macAddress = '';
   String ipAddress = '';
   String hostName = '';
-  Hosts? host; // Add the host variable
 
   @override
   void initState() {
     super.initState();
     if (widget.host != null) {
-      // Initialize fields with the provided host object
-      host = widget.host;
-      hostName = host!.hostName;
-      ipAddress = host!.ipAddress;
-      macAddress = host!.macAddress;
+      final hostProvider = context.read<HostListProvider>();
+      final host = widget.host!;
+      hostName = host.hostName;
+      ipAddress = host.ipAddress;
+      macAddress = host.macAddress;
     }
     loadPreferences();
   }
 
-//using json to manage listed objects.
   Future<void> savePreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> hostList = savedHosts.map((host) => jsonEncode(host.toJson())).toList();
+    final hostProvider = context.read<HostListProvider>();
+    List<String> hostList =
+        hostProvider.savedHosts.map((host) => jsonEncode(host.toJson())).toList();
     prefs.setStringList('hosts', hostList);
   }
 
   Future<void> loadPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    final hostProvider = context.read<HostListProvider>();
     List<String> hostList = prefs.getStringList('hosts') ?? [];
-    savedHosts = hostList.map((item) => Hosts.fromJson(jsonDecode(item))).toList();
+    hostProvider.savedHosts = hostList.map((item) => Hosts.fromJson(jsonDecode(item))).toList();
   }
 
   void _wakewake() {
-    sendMagicPacket(macAddress, ipAddress); //target mac
+    sendMagicPacket(macAddress, ipAddress);
   }
 
   void _saveHost() {
-    setState(() {
-      Hosts newHost = Hosts(hostName, ipAddress, macAddress);
-      savedHosts.add(newHost);
-    });
-  }
-
-  void removeHost(Hosts host) {
-    setState(() {
-      savedHosts.remove(host);
-    });
+    final hostProvider = context.read<HostListProvider>();
+    Hosts newHost = Hosts(hostName, ipAddress, macAddress);
+    hostProvider.savedHosts.add(newHost);
+    savePreferences();
   }
 
   @override
@@ -72,7 +70,6 @@ class _AddHostState extends State<AddHost> {
           title: Text(widget.title),
         ),
         body: SingleChildScrollView(
-            // Add this
             child: Column(
           children: <Widget>[
             Container(

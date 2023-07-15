@@ -1,7 +1,12 @@
-
 import 'package:flutter/material.dart';
-import 'hosts.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'addserver.dart';
+import 'hosts.dart';
+import 'package:provider/provider.dart';
+import 'main.dart';
+
+
 
 List<Hosts> savedHosts = [];
 
@@ -13,9 +18,16 @@ class HostList extends AddHost {
 }
 
 class _HostListState extends State<HostList> {
+  Future<void> loadPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final hostProvider = context.read<HostListProvider>();
+    List<String> hostList = prefs.getStringList('hosts') ?? [];
+    hostProvider.savedHosts = hostList.map((item) => Hosts.fromJson(jsonDecode(item))).toList();
+  }
+
   @override
-  
   Widget build(BuildContext context) {
+    final hostProvider = context.watch<HostListProvider>(); // Access the HostListProvider
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hosts List'),
@@ -38,20 +50,21 @@ class _HostListState extends State<HostList> {
         ],
       ),
       body: ListView.builder(
-        itemCount: savedHosts.length,
+        itemCount: hostProvider.savedHosts.length,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              sendMagicPacket(savedHosts[index].macAddress, savedHosts[index].ipAddress);
+              sendMagicPacket(hostProvider.savedHosts[index].macAddress,
+                  hostProvider.savedHosts[index].ipAddress);
             },
             onLongPress: () {
               _showContextMenu(context, index);
             },
             child: Card(
               child: ListTile(
-                title: Text(savedHosts[index].hostName),
+                title: Text(hostProvider.savedHosts[index].hostName),
                 subtitle: Text(
-                  'IP: ${savedHosts[index].ipAddress}, MAC: ${savedHosts[index].macAddress}',
+                  'IP: ${hostProvider.savedHosts[index].ipAddress}, MAC: ${hostProvider.savedHosts[index].macAddress}',
                 ),
               ),
             ),
@@ -61,13 +74,17 @@ class _HostListState extends State<HostList> {
     );
   }
 
-  void removeHost(Hosts host) {
-    setState(() {
-      savedHosts.remove(host);
-    });
+  Future<void> savePreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final hostProvider = context.read<HostListProvider>();
+    List<String> hostList =
+        hostProvider.savedHosts.map((host) => jsonEncode(host.toJson())).toList();
+    prefs.setStringList('hosts', hostList);
   }
 
   void _showContextMenu(BuildContext context, int index) {
+    final hostProvider = context.read<HostListProvider>(); // Access the HostListProvider
+
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -83,19 +100,18 @@ class _HostListState extends State<HostList> {
                   MaterialPageRoute(
                     builder: (context) => AddHost(
                       title: 'Add Host',
-                      host: savedHosts[index], // Pass the host to edit
+                      host: hostProvider.savedHosts[index],
                     ),
                   ),
-                ).then((_) {
-                  setState(() {});
-                });
+                );
               },
             ),
             ListTile(
               leading: const Icon(Icons.delete),
               title: const Text('Delete'),
               onTap: () {
-                removeHost(savedHosts[index]); // Call the removeHost method to remove the host
+                hostProvider.removeHost(hostProvider.savedHosts[index]);
+                savePreferences();
                 Navigator.pop(context);
               },
             ),
