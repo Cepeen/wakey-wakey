@@ -1,11 +1,5 @@
-import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'addserver.dart';
-import 'hosts.dart';
-import 'package:provider/provider.dart';
-import 'main.dart';
-
+import '../models/hosts.dart';
+import '../imports.dart';
 
 
 List<Hosts> savedHosts = [];
@@ -18,16 +12,11 @@ class HostList extends AddHost {
 }
 
 class _HostListState extends State<HostList> {
-  Future<void> loadPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final hostProvider = context.read<HostListProvider>();
-    List<String> hostList = prefs.getStringList('hosts') ?? [];
-    hostProvider.savedHosts = hostList.map((item) => Hosts.fromJson(jsonDecode(item))).toList();
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    final hostProvider = context.watch<HostListProvider>(); // Access the HostListProvider
+    final hostProvider = context.watch<HostListProvider>(); 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hosts List'),
@@ -74,20 +63,14 @@ class _HostListState extends State<HostList> {
     );
   }
 
-  Future<void> savePreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final hostProvider = context.read<HostListProvider>();
-    List<String> hostList =
-        hostProvider.savedHosts.map((host) => jsonEncode(host.toJson())).toList();
-    prefs.setStringList('hosts', hostList);
-  }
 
   void _showContextMenu(BuildContext context, int index) {
-    final hostProvider = context.read<HostListProvider>(); // Access the HostListProvider
+    final hostProvider = context.read<HostListProvider>(); 
 
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
+
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -111,7 +94,7 @@ class _HostListState extends State<HostList> {
               title: const Text('Delete'),
               onTap: () {
                 hostProvider.removeHost(hostProvider.savedHosts[index]);
-                savePreferences();
+                // savePreferences();
                 Navigator.pop(context);
               },
             ),
