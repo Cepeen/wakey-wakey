@@ -5,7 +5,7 @@ class AddHost extends StatefulWidget {
   const AddHost({Key? key, required this.title, this.host}) : super(key: key);
 
   final String title;
-  final Hosts? host; // Add the host parameter
+  final Host? host; // Add the host parameter
 
   @override
   State<AddHost> createState() => _AddHostState();
@@ -41,7 +41,7 @@ class _AddHostState extends State<AddHost> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final hostProvider = context.read<HostListProvider>();
     List<String> hostList = prefs.getStringList('hosts') ?? [];
-    hostProvider.savedHosts = hostList.map((item) => Hosts.fromJson(jsonDecode(item))).toList();
+    hostProvider.savedHosts = hostList.map((item) => Host.fromJson(jsonDecode(item))).toList();
   }
 
   void _wakewake() {
@@ -50,7 +50,7 @@ class _AddHostState extends State<AddHost> {
 
   void _saveHost() {
     final hostProvider = context.read<HostListProvider>();
-    Hosts newHost = Hosts(hostName, ipAddress, macAddress);
+    Host newHost = Host(hostName, ipAddress, macAddress);
     hostProvider.savedHosts.add(newHost);
     savePreferences();
   }

@@ -1,8 +1,6 @@
-import '../models/hosts.dart';
+
 import '../imports.dart';
 
-
-List<Hosts> savedHosts = [];
 
 class HostList extends AddHost {
   const HostList({super.key, required super.title});
@@ -12,11 +10,17 @@ class HostList extends AddHost {
 }
 
 class _HostListState extends State<HostList> {
+  late Future<void> _loadHostsFuture;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadHostsFuture = context.read<HostListProvider>().loadPreferences();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final hostProvider = context.watch<HostListProvider>(); 
+    final hostProvider = context.watch<HostListProvider>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hosts List'),
@@ -38,39 +42,48 @@ class _HostListState extends State<HostList> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: hostProvider.savedHosts.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              sendMagicPacket(hostProvider.savedHosts[index].macAddress,
-                  hostProvider.savedHosts[index].ipAddress);
-            },
-            onLongPress: () {
-              _showContextMenu(context, index);
-            },
-            child: Card(
-              child: ListTile(
-                title: Text(hostProvider.savedHosts[index].hostName),
-                subtitle: Text(
-                  'IP: ${hostProvider.savedHosts[index].ipAddress}, MAC: ${hostProvider.savedHosts[index].macAddress}',
-                ),
-              ),
-            ),
-          );
+      body: FutureBuilder<void>(
+        future: _loadHostsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: hostProvider.savedHosts.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    sendMagicPacket(hostProvider.savedHosts[index].macAddress,
+                        hostProvider.savedHosts[index].ipAddress);
+                  },
+                  onLongPress: () {
+                    _showContextMenu(context, index);
+                  },
+                  child: Card(
+                    child: ListTile(
+                      title: Text(hostProvider.savedHosts[index].hostName),
+                      subtitle: Text(
+                        'IP: ${hostProvider.savedHosts[index].ipAddress}, MAC: ${hostProvider.savedHosts[index].macAddress}',
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          }
         },
       ),
     );
   }
 
-
   void _showContextMenu(BuildContext context, int index) {
-    final hostProvider = context.read<HostListProvider>(); 
+    final hostProvider = context.read<HostListProvider>();
 
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [

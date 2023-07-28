@@ -1,4 +1,4 @@
-import 'widgets/server_list.dart';
+import 'widgets/host_list.dart';
 import 'imports.dart';
 
 void main() {

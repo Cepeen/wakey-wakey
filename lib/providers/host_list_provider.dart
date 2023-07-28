@@ -6,11 +6,18 @@ import '../models/hosts.dart';
 
 
 class HostListProvider extends ChangeNotifier {
-  List<Hosts> savedHosts = [];
+  List<Host> savedHosts = [];
 
-  void removeHost(Hosts host) {
+  void removeHost(Host host) {
     savedHosts.remove(host);
     savePreferences();
+    notifyListeners();
+  }
+
+ Future<void> loadPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> hostList = prefs.getStringList('hosts') ?? [];
+    savedHosts = hostList.map((item) => Host.fromJson(jsonDecode(item))).toList();
     notifyListeners();
   }
 
@@ -19,13 +26,5 @@ class HostListProvider extends ChangeNotifier {
     List<String> hostList = savedHosts.map((host) => jsonEncode(host.toJson())).toList();
     prefs.setStringList('hosts', hostList);
   }
-
-  Future<void> loadPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> hostList = prefs.getStringList('hosts') ?? [];
-    savedHosts = hostList.map((item) => Hosts.fromJson(jsonDecode(item))).toList();
-    notifyListeners();
-  }
 }
-
 

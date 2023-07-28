@@ -1,10 +1,10 @@
 
-class Hosts {
+class Host {
   String hostName;
   String ipAddress;
   String macAddress;
 
-  Hosts(this.hostName, this.ipAddress, this.macAddress);
+  Host(this.hostName, this.ipAddress, this.macAddress);
 
   Map<String, dynamic> toJson() => {
     'hostName': hostName,
@@ -12,7 +12,7 @@ class Hosts {
     'macAddress': macAddress,
   };
 
-  factory Hosts.fromJson(Map<String, dynamic> json) => Hosts(
+  factory Host.fromJson(Map<String, dynamic> json) => Host(
     json['hostName'],
     json['ipAddress'],
     json['macAddress'],
