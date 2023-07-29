@@ -1,6 +1,5 @@
-
 import '../imports.dart';
-
+import '../utils/utils.dart';
 
 class HostList extends AddHost {
   const HostList({super.key, required super.title});
@@ -57,6 +56,14 @@ class _HostListState extends State<HostList> {
                   onTap: () {
                     sendMagicPacket(hostProvider.savedHosts[index].macAddress,
                         hostProvider.savedHosts[index].ipAddress);
+                    // Display the notification
+                    Fluttertoast.showToast(
+                      msg: "wake wake!",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      backgroundColor: Colors.black45,
+                      textColor: Colors.white,
+                    );
                   },
                   onLongPress: () {
                     _showContextMenu(context, index);
@@ -89,7 +96,7 @@ class _HostListState extends State<HostList> {
           children: [
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Setting'),
+              title: const Text('Edit'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -107,7 +114,6 @@ class _HostListState extends State<HostList> {
               title: const Text('Delete'),
               onTap: () {
                 hostProvider.removeHost(hostProvider.savedHosts[index]);
-                // savePreferences();
                 Navigator.pop(context);
               },
             ),

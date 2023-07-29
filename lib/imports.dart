@@ -1,5 +1,6 @@
 export 'package:flutter/material.dart';
 export 'package:flutter/services.dart';
+export 'package:fluttertoast/fluttertoast.dart';
 export 'dart:convert';
 export 'dart:io';
 export 'package:shared_preferences/shared_preferences.dart';
