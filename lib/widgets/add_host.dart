@@ -57,19 +57,27 @@ class _AddHostState extends State<AddHost> {
   }
 
   void _saveHost() {
-    // Validation check: Ensure IP address is provided
+    // Validation check: Ensure MAC address is provided and has the correct format
     if (macAddress.trim().replaceAll(":", "").length != 12) {
       // Show a snackbar with an error message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please provide a valid MAC address (12 characters).')),
       );
-    } else if (ipAddress.trim().isEmpty | macAddress.trim().isEmpty) {
+      return; // Exit the method without saving the host
+    } else if (ipAddress.trim().isEmpty) {
       // Show a snackbar with an error message
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('IP and mac addresses are required.')),
+        const SnackBar(content: Text('IP and MAC addresses are required.')),
+      );
+      return; // Exit the method without saving the host
+    } else if (!isIPv4Address32Bit(ipAddress)) {
+      // Show a snackbar with an error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please provide a valid 32-bit IP address.')),
       );
       return; // Exit the method without saving the host
     }
+
     final hostProvider = context.read<HostListProvider>();
     Host newHost = Host(hostName, ipAddress, macAddress);
     int existingHostIndex = hostProvider.savedHosts.indexWhere((host) => host.hostName == hostName);
@@ -78,7 +86,6 @@ class _AddHostState extends State<AddHost> {
     } else {
       hostProvider.savedHosts.add(newHost);
     }
-
     savePreferences();
   }
 
@@ -148,4 +155,24 @@ class _AddHostState extends State<AddHost> {
       ),
     );
   }
+}
+
+bool isIPv4Address32Bit(String ipAddress) {
+  List<String> octets = ipAddress.split('.');
+
+  if (octets.length != 4) {
+    return false;
+  }
+  for (String octet in octets) {
+    int value;
+    try {
+      value = int.parse(octet);
+    } catch (e) {
+      return false;
+    }
+    if (value < 0 || value > 255) {
+      return false;
+    }
+  }
+  return true;
 }
