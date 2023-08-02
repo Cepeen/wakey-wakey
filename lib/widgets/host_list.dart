@@ -1,3 +1,4 @@
+import '../about.dart';
 import '../imports.dart';
 import '../utils/utils.dart';
 
@@ -23,6 +24,7 @@ class _HostListState extends State<HostList> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hosts List'),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -34,9 +36,26 @@ class _HostListState extends State<HostList> {
                     title: 'Add Host',
                   ),
                 ),
-              ).then((_) {
-                setState(() {});
-              });
+              );
+              setState(() {});
+            },
+          ),
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'about') {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => About()),
+                // );
+              }
+            },
+            itemBuilder: (context) {
+              return [
+                const PopupMenuItem<String>(
+                  value: 'about',
+                  child: Text('About'),
+                ),
+              ];
             },
           ),
         ],
@@ -54,16 +73,8 @@ class _HostListState extends State<HostList> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   onTap: () {
-                    sendMagicPacket(hostProvider.savedHosts[index].macAddress,
-                        hostProvider.savedHosts[index].ipAddress);
-                    // Display the notification
-                    Fluttertoast.showToast(
-                      msg: "wake wake!",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      backgroundColor: Colors.black45,
-                      textColor: Colors.white,
-                    );
+                    checkAndExecuteOrNot(hostProvider.savedHosts[index].macAddress,
+                        hostProvider.savedHosts[index].ipAddress, context);
                   },
                   onLongPress: () {
                     _showContextMenu(context, index);

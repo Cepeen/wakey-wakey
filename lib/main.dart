@@ -21,7 +21,7 @@ class WakeWake extends StatelessWidget {
         primarySwatch: Colors.grey,
       ),
       home: const HostList(
-        title: '',
+        title: 'Host List',
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 
 void sendMagicPacket(String macAddress, String ipAddress) {
   final List<int> macBytes = macAddress.split(':').map((e) => int.parse(e, radix: 16)).toList();
@@ -21,15 +22,21 @@ void sendMagicPacket(String macAddress, String ipAddress) {
   });
 }
 
-String formatMacAddress(String input) {
-  final sanitizedInput = input.replaceAll(":", "");
-  if (sanitizedInput.length != 12) {
-    return input;
-  }
-  final pairs = <String>[];
-  for (var i = 0; i < sanitizedInput.length; i += 2) {
-    pairs.add(sanitizedInput.substring(i, i + 2));
-  }
-  final formattedMacAddress = pairs.join(":");
-  return formattedMacAddress;
+void checkAndExecuteOrNot(String macAddress, String ipAddress, BuildContext context) {
+  InternetAddress.lookup('google.com').then((result) {
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      sendMagicPacket(macAddress, ipAddress);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Wake! Wake! Packet sent!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Connection error.')),
+      );
+    }
+  }).catchError((error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Connection error.')),
+    );
+  });
 }

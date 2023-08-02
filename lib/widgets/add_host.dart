@@ -1,12 +1,13 @@
 import '../models/hosts.dart';
 import '../imports.dart';
 import '../utils/utils.dart';
+import 'host_list.dart';
 
 class AddHost extends StatefulWidget {
   const AddHost({Key? key, required this.title, this.host}) : super(key: key);
 
   final String title;
-  final Host? host; // Add the host parameter
+  final Host? host;
 
   @override
   State<AddHost> createState() => _AddHostState();
@@ -20,21 +21,52 @@ class _AddHostState extends State<AddHost> {
 
   Future<bool> _handleBackPress() async {
     // Close the modal and return to HostList screen
-    Navigator.popUntil(context, ModalRoute.withName('/'));
+    Navigator.pop(context, ModalRoute.withName('/'));
     return true; // Allow back navigation
+  }
+
+  void _navigateToAddHostScreen() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HostList(
+          title: 'Host List',
+        ),
+      ),
+    );
+    setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
     if (widget.host != null) {
-      final hostProvider = context.read<HostListProvider>();
       final host = widget.host!;
       hostName = host.hostName;
       ipAddress = host.ipAddress;
       macAddress = host.macAddress;
     }
     loadPreferences();
+  }
+
+  bool _validateHostDetails(String macAddress, String ipAddress) {
+    if (macAddress.trim().replaceAll(":", "").length != 12) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please provide a valid MAC address (12 characters).')),
+      );
+      return false;
+    } else if (ipAddress.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('IP and MAC addresses are required.')),
+      );
+      return false;
+    } else if (!isIPv4Address32Bit(ipAddress)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please provide a valid 32-bit IP address.')),
+      );
+      return false;
+    }
+    return true;
   }
 
   Future<void> savePreferences() async {
@@ -53,40 +85,43 @@ class _AddHostState extends State<AddHost> {
   }
 
   void _wakewake() {
-    sendMagicPacket(macAddress, ipAddress);
+    if (_validateHostDetails(macAddress, ipAddress)) {
+      // Host details are valid, execute the magic packet sending function
+      checkAndExecuteOrNot(macAddress, ipAddress, context);
+    }
   }
 
   void _saveHost() {
-    // Validation check: Ensure MAC address is provided and has the correct format
-    if (macAddress.trim().replaceAll(":", "").length != 12) {
-      // Show a snackbar with an error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please provide a valid MAC address (12 characters).')),
-      );
-      return; // Exit the method without saving the host
-    } else if (ipAddress.trim().isEmpty) {
-      // Show a snackbar with an error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('IP and MAC addresses are required.')),
-      );
-      return; // Exit the method without saving the host
-    } else if (!isIPv4Address32Bit(ipAddress)) {
-      // Show a snackbar with an error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please provide a valid 32-bit IP address.')),
-      );
-      return; // Exit the method without saving the host
+    String newHostName = hostName;
+    String newMacAddress = macAddress;
+    String newIpAddress = ipAddress;
+
+    if (!_validateHostDetails(newMacAddress, newIpAddress)) {
+      // Validation failed, exit the method without saving
+      return;
     }
 
     final hostProvider = context.read<HostListProvider>();
-    Host newHost = Host(hostName, ipAddress, macAddress);
-    int existingHostIndex = hostProvider.savedHosts.indexWhere((host) => host.hostName == hostName);
-    if (existingHostIndex != -1) {
-      hostProvider.savedHosts[existingHostIndex] = newHost;
+    if (widget.host != null) {
+      // Existing host, update values
+      int existingHostIndex =
+          hostProvider.savedHosts.indexWhere((host) => host.hostId == widget.host!.hostId);
+      if (existingHostIndex != -1) {
+        Host updatedHost = Host(widget.host!.hostId, newHostName, newIpAddress, newMacAddress);
+        hostProvider.savedHosts[existingHostIndex] = updatedHost;
+      }
     } else {
+      // New host, generate a hostId & save
+      String hostId = generateHostId();
+      Host newHost = Host(hostId, newHostName, newIpAddress, newMacAddress);
       hostProvider.savedHosts.add(newHost);
     }
     savePreferences();
+  }
+
+  String generateHostId() {
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+    return 'host_$timestamp';
   }
 
   @override
@@ -144,6 +179,7 @@ class _AddHostState extends State<AddHost> {
                     onPressed: () {
                       _saveHost();
                       savePreferences();
+                      _navigateToAddHostScreen();
                     },
                     child: const Text('Save'),
                   ),
@@ -157,6 +193,7 @@ class _AddHostState extends State<AddHost> {
   }
 }
 
+// Verifying that the IP address is in 32-bit format
 bool isIPv4Address32Bit(String ipAddress) {
   List<String> octets = ipAddress.split('.');
 
