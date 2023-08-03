@@ -1,6 +1,5 @@
-import '../about.dart';
 import '../imports.dart';
-import '../utils/utils.dart';
+
 
 class HostList extends AddHost {
   const HostList({super.key, required super.title});
@@ -19,12 +18,11 @@ class _HostListState extends State<HostList> {
   }
 
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     final hostProvider = context.watch<HostListProvider>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hosts List'),
-        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -36,8 +34,9 @@ class _HostListState extends State<HostList> {
                     title: 'Add Host',
                   ),
                 ),
-              );
-              setState(() {});
+              ).then((_) {
+                setState(() {});
+              });
             },
           ),
           PopupMenuButton<String>(
@@ -95,6 +94,7 @@ class _HostListState extends State<HostList> {
       ),
     );
   }
+  
 
   void _showContextMenu(BuildContext context, int index) {
     final hostProvider = context.read<HostListProvider>();

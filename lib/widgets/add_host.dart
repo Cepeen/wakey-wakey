@@ -1,13 +1,12 @@
 import '../models/hosts.dart';
 import '../imports.dart';
-import '../utils/utils.dart';
-import 'host_list.dart';
+
 
 class AddHost extends StatefulWidget {
   const AddHost({Key? key, required this.title, this.host}) : super(key: key);
 
   final String title;
-  final Host? host;
+  final Host? host; // Add the host parameter
 
   @override
   State<AddHost> createState() => _AddHostState();
@@ -21,20 +20,8 @@ class _AddHostState extends State<AddHost> {
 
   Future<bool> _handleBackPress() async {
     // Close the modal and return to HostList screen
-    Navigator.pop(context, ModalRoute.withName('/'));
+    Navigator.popUntil(context, ModalRoute.withName('/'));
     return true; // Allow back navigation
-  }
-
-  void _navigateToAddHostScreen() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HostList(
-          title: 'Host List',
-        ),
-      ),
-    );
-    setState(() {});
   }
 
   @override
@@ -92,6 +79,7 @@ class _AddHostState extends State<AddHost> {
   }
 
   void _saveHost() {
+    // Extract host details from text fields
     String newHostName = hostName;
     String newMacAddress = macAddress;
     String newIpAddress = ipAddress;
@@ -103,7 +91,7 @@ class _AddHostState extends State<AddHost> {
 
     final hostProvider = context.read<HostListProvider>();
     if (widget.host != null) {
-      // Existing host, update values
+
       int existingHostIndex =
           hostProvider.savedHosts.indexWhere((host) => host.hostId == widget.host!.hostId);
       if (existingHostIndex != -1) {
@@ -112,7 +100,7 @@ class _AddHostState extends State<AddHost> {
       }
     } else {
       // New host, generate a hostId & save
-      String hostId = generateHostId();
+      String hostId = generateHostId(); // generate hostId
       Host newHost = Host(hostId, newHostName, newIpAddress, newMacAddress);
       hostProvider.savedHosts.add(newHost);
     }
@@ -179,7 +167,6 @@ class _AddHostState extends State<AddHost> {
                     onPressed: () {
                       _saveHost();
                       savePreferences();
-                      _navigateToAddHostScreen();
                     },
                     child: const Text('Save'),
                   ),
@@ -193,23 +180,5 @@ class _AddHostState extends State<AddHost> {
   }
 }
 
-// Verifying that the IP address is in 32-bit format
-bool isIPv4Address32Bit(String ipAddress) {
-  List<String> octets = ipAddress.split('.');
 
-  if (octets.length != 4) {
-    return false;
-  }
-  for (String octet in octets) {
-    int value;
-    try {
-      value = int.parse(octet);
-    } catch (e) {
-      return false;
-    }
-    if (value < 0 || value > 255) {
-      return false;
-    }
-  }
-  return true;
-}
+

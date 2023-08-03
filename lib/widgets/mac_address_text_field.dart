@@ -1,5 +1,6 @@
 import '../imports.dart';
 
+
 class MacAddressTextField extends StatefulWidget {
   const MacAddressTextField({Key? key, required this.onChanged, required this.macAddress})
       : super(key: key);
@@ -50,18 +51,4 @@ class _MacAddressInputFormatter extends TextInputFormatter {
     );
   }
 }
-
-String formatMacAddress(String input) {
-  final sanitizedInput = input.replaceAll(":", "");
-  if (sanitizedInput.length != 12) {
-    return input;
-  }
-  final pairs = <String>[];
-  for (var i = 0; i < sanitizedInput.length; i += 2) {
-    pairs.add(sanitizedInput.substring(i, i + 2));
-  }
-  final formattedMacAddress = pairs.join(":");
-  return formattedMacAddress;
-}
-
 
