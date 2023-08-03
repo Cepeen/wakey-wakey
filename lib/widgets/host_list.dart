@@ -1,6 +1,5 @@
 import '../imports.dart';
 
-
 class HostList extends AddHost {
   const HostList({super.key, required super.title});
 
@@ -18,10 +17,11 @@ class _HostListState extends State<HostList> {
   }
 
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     final hostProvider = context.watch<HostListProvider>();
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Hosts List'),
         actions: [
           IconButton(
@@ -94,7 +94,6 @@ class _HostListState extends State<HostList> {
       ),
     );
   }
-  
 
   void _showContextMenu(BuildContext context, int index) {
     final hostProvider = context.read<HostListProvider>();

@@ -1,6 +1,6 @@
 import '../models/hosts.dart';
 import '../imports.dart';
-
+import 'host_list.dart';
 
 class AddHost extends StatefulWidget {
   const AddHost({Key? key, required this.title, this.host}) : super(key: key);
@@ -18,10 +18,19 @@ class _AddHostState extends State<AddHost> {
   String ipAddress = '';
   String hostName = '';
 
+
+// Prevents multiple instances of AddHost, removes modal
   Future<bool> _handleBackPress() async {
-    // Close the modal and return to HostList screen
-    Navigator.popUntil(context, ModalRoute.withName('/'));
-    return true; // Allow back navigation
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HostList(
+          title: '',
+        ),
+      ),
+      (route) => false, 
+    );
+    return false; 
   }
 
   @override
@@ -91,7 +100,6 @@ class _AddHostState extends State<AddHost> {
 
     final hostProvider = context.read<HostListProvider>();
     if (widget.host != null) {
-
       int existingHostIndex =
           hostProvider.savedHosts.indexWhere((host) => host.hostId == widget.host!.hostId);
       if (existingHostIndex != -1) {
@@ -179,6 +187,3 @@ class _AddHostState extends State<AddHost> {
     );
   }
 }
-
-
-
