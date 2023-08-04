@@ -21,7 +21,6 @@ class _HostListState extends State<HostList> {
     final hostProvider = context.watch<HostListProvider>();
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: const Text('Hosts List'),
         actions: [
           IconButton(
@@ -63,7 +62,7 @@ class _HostListState extends State<HostList> {
         future: _loadHostsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else {

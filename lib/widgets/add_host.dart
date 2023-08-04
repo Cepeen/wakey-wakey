@@ -14,10 +14,11 @@ class AddHost extends StatefulWidget {
 
 class _AddHostState extends State<AddHost> {
   final int port = 9;
+  String hostId = '';
   String macAddress = '';
   String ipAddress = '';
   String hostName = '';
-
+  String time = '';
 
 // Prevents multiple instances of AddHost, removes modal
   Future<bool> _handleBackPress() async {
@@ -28,9 +29,9 @@ class _AddHostState extends State<AddHost> {
           title: '',
         ),
       ),
-      (route) => false, 
+      (route) => false,
     );
-    return false; 
+    return false;
   }
 
   @override
@@ -41,6 +42,7 @@ class _AddHostState extends State<AddHost> {
       hostName = host.hostName;
       ipAddress = host.ipAddress;
       macAddress = host.macAddress;
+      time = host.time;
     }
     loadPreferences();
   }
@@ -48,7 +50,7 @@ class _AddHostState extends State<AddHost> {
   bool _validateHostDetails(String macAddress, String ipAddress) {
     if (macAddress.trim().replaceAll(":", "").length != 12) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please provide a valid MAC address (12 characters).')),
+        const SnackBar(content: Text('Provide a valid MAC address (17 characters withdots).')),
       );
       return false;
     } else if (ipAddress.trim().isEmpty) {
@@ -92,6 +94,7 @@ class _AddHostState extends State<AddHost> {
     String newHostName = hostName;
     String newMacAddress = macAddress;
     String newIpAddress = ipAddress;
+    String newtime = time;
 
     if (!_validateHostDetails(newMacAddress, newIpAddress)) {
       // Validation failed, exit the method without saving
@@ -103,13 +106,14 @@ class _AddHostState extends State<AddHost> {
       int existingHostIndex =
           hostProvider.savedHosts.indexWhere((host) => host.hostId == widget.host!.hostId);
       if (existingHostIndex != -1) {
-        Host updatedHost = Host(widget.host!.hostId, newHostName, newIpAddress, newMacAddress);
+        Host updatedHost =
+            Host(widget.host!.hostId, newHostName, newIpAddress, newMacAddress, time);
         hostProvider.savedHosts[existingHostIndex] = updatedHost;
       }
     } else {
       // New host, generate a hostId & save
       String hostId = generateHostId(); // generate hostId
-      Host newHost = Host(hostId, newHostName, newIpAddress, newMacAddress);
+      Host newHost = Host(hostId, newHostName, newIpAddress, newMacAddress, time);
       hostProvider.savedHosts.add(newHost);
     }
     savePreferences();
@@ -118,6 +122,28 @@ class _AddHostState extends State<AddHost> {
   String generateHostId() {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     return 'host_$timestamp';
+  }
+
+  void executeWakeFunctionAtTime(Host host) {
+    if (host.time == null) {
+      debugPrint('Host does not have a specific time to start.');
+      return;
+    }
+
+    DateTime scheduledTime = DateTime.parse(host.time); // Convert time string to DateTime object
+    DateTime now = DateTime.now();
+
+    if (scheduledTime.isBefore(now)) {
+      debugPrint('Scheduled time is in the past.');
+      return;
+    }
+
+    Duration delay = scheduledTime.difference(now);
+
+    // Schedule the start function to run after the specified delay
+    Future.delayed(delay, () {
+      sendMagicPacket; // Call the start function
+    });
   }
 
   @override
@@ -164,6 +190,17 @@ class _AddHostState extends State<AddHost> {
                   ipAddress: ipAddress,
                 ),
               ),
+              Container(
+                padding: const EdgeInsets.all(20.0),
+                child: TimeTextField(
+                  onChanged: (value) {
+                    setState(() {
+                      time = value;
+                    });
+                  },
+                  time: time,
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -175,6 +212,8 @@ class _AddHostState extends State<AddHost> {
                     onPressed: () {
                       _saveHost();
                       savePreferences();
+                      executeWakeFunctionAtTime(
+                          Host(hostId, hostName, ipAddress, macAddress, time));
                     },
                     child: const Text('Save'),
                   ),

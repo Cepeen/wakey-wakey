@@ -43,7 +43,8 @@ class _MacAddressInputFormatter extends TextInputFormatter {
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
     TextEditingValue newValue,
-  ) {
+  ) 
+  {
     final formattedText = formatMacAddress(newValue.text);
     return TextEditingValue(
       text: formattedText,

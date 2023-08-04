@@ -1,5 +1,6 @@
 import 'dart:io';
 import '../imports.dart';
+import '../models/hosts.dart';
 
 void sendMagicPacket(String macAddress, String ipAddress) {
   final List<int> macBytes = macAddress.split(':').map((e) => int.parse(e, radix: 16)).toList();
@@ -119,4 +120,45 @@ String formatIPAddress(TextEditingValue newValue) {
 
   var string = buffer.toString();
   return string;
+}
+
+void executeWakeFunctionAtTime(Host host) {
+  if (host.time == null) {
+    debugPrint('Host does not have a specific time to start.');
+    return;
+  }
+
+  DateTime scheduledTime = DateTime.parse(host.time); // Convert time string to DateTime object
+  DateTime now = DateTime.now();
+
+  if (scheduledTime.isBefore(now)) {
+    debugPrint('Scheduled time is in the past.');
+    return;
+  }
+
+  Duration delay = scheduledTime.difference(now);
+
+  // Schedule the start function to run after the specified delay
+  Future.delayed(delay, () {
+    sendMagicPacket; // Call the start function
+  });
+}
+
+String formatTimeInput(String input) {
+  final RegExp timeRegex = RegExp(r'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$');
+  if (timeRegex.hasMatch(input)) {
+    return input;
+  } else {
+    // Format the input to 'HH:MM' if it doesn't match the required format
+    final String formattedInput = input.replaceAll(RegExp(r'[^0-9:]'), '');
+
+    if (formattedInput.length >= 3) {
+      // Add the ':' after the first two characters
+      final String hours = formattedInput.substring(0, 2);
+      final String minutes = formattedInput.substring(2);
+      return '$hours:$minutes';
+    } else {
+      return formattedInput;
+    }
+  }
 }

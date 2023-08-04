@@ -12,5 +12,6 @@ export 'widgets/add_host.dart';
 export 'widgets/ip_address_text_field.dart';
 export 'widgets/mac_address_text_field.dart';
 export 'widgets/host_name_text_field.dart';
+export 'widgets/time_text_field.dart';
 export '../utils/utils.dart';
 export '../about.dart';
