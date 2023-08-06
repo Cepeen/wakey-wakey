@@ -1,27 +1,37 @@
 import '../imports.dart';
 
-
 class TimePickerWidget extends StatefulWidget {
   final Function(TimeOfDay) onTimePicked;
+  final TimeOfDay pickedTime; // Add the pickedTime parameter
 
-  TimePickerWidget({required this.onTimePicked});
+  const TimePickerWidget({
+    Key? key,
+    required this.onTimePicked,
+    required this.pickedTime,
+  }) : super(key: key);
 
   @override
-  _TimePickerWidgetState createState() => _TimePickerWidgetState();
+  TimePickerWidgetState createState() => TimePickerWidgetState();
 }
 
-class _TimePickerWidgetState extends State<TimePickerWidget> {
-  TimeOfDay _selectedTime = TimeOfDay.now();
+class TimePickerWidgetState extends State<TimePickerWidget> {
+  TimeOfDay _selectedTime = TimeOfDay.now(); // Initialize with the current time
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTime = widget.pickedTime; // Set the initial selected time from the Host object
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       child: ListTile(
-        title: const Text('Pick a time'),
+        title: const Text('Run on time'),
         trailing: Text(
           '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}',
-          style: TextStyle(fontSize: 16),
+          style: const TextStyle(fontSize: 16),
         ),
         onTap: () async {
           TimeOfDay? pickedTime = await showTimePicker(
@@ -29,7 +39,7 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
             initialTime: _selectedTime,
             builder: (BuildContext context, Widget? child) {
               return MediaQuery(
-                data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
                 child: child!,
               );
             },
@@ -38,7 +48,7 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
             setState(() {
               _selectedTime = pickedTime;
             });
-            widget.onTimePicked(_selectedTime);
+            widget.onTimePicked(pickedTime);
           }
         },
       ),

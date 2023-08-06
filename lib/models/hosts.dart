@@ -1,25 +1,36 @@
+import '../imports.dart';
+
 class Host {
   String hostId;
   String hostName;
   String ipAddress;
   String macAddress;
-  String time;
+  TimeOfDay pickedTime;
 
-  Host(this.hostId, this.hostName, this.ipAddress, this.macAddress, this.time);
+  Host({
+    required this.hostId,
+    required this.hostName,
+    required this.ipAddress,
+    required this.macAddress,
+    required this.pickedTime,
+  });
 
   Map<String, dynamic> toJson() => {
         'hostId': hostId,
         'hostName': hostName,
         'ipAddress': ipAddress,
         'macAddress': macAddress,
-        'time': time,
+        'time': '${pickedTime.hour}:${pickedTime.minute}',
       };
 
   factory Host.fromJson(Map<String, dynamic> json) => Host(
-        json['hostId'] ?? '',
-        json['hostName'],
-        json['ipAddress'],
-        json['macAddress'],
-        json['time'] ?? '',
+        hostId: json['hostId'] ?? '',
+        hostName: json['hostName'],
+        ipAddress: json['ipAddress'],
+        macAddress: json['macAddress'],
+        pickedTime: TimeOfDay(
+          hour: int.parse(json['time'].split(':')[0]),
+          minute: int.parse(json['time'].split(':')[1]),
+        ),
       );
 }

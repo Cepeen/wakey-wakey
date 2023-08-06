@@ -122,27 +122,27 @@ String formatIPAddress(TextEditingValue newValue) {
   return string;
 }
 
-void executeWakeFunctionAtTime(Host host) {
-  if (host.time == null) {
-    debugPrint('Host does not have a specific time to start.');
-    return;
-  }
+// void executeWakeFunctionAtTime(Host host) {
+//   if (host.time == null) {
+//     debugPrint('Host does not have a specific time to start.');
+//     return;
+//   }
 
-  DateTime scheduledTime = DateTime.parse(host.time); // Convert time string to DateTime object
-  DateTime now = DateTime.now();
+//   DateTime scheduledTime = DateTime.parse(host.time); // Convert time string to DateTime object
+//   DateTime now = DateTime.now();
 
-  if (scheduledTime.isBefore(now)) {
-    debugPrint('Scheduled time is in the past.');
-    return;
-  }
+//   if (scheduledTime.isBefore(now)) {
+//     debugPrint('Scheduled time is in the past.');
+//     return;
+//   }
 
-  Duration delay = scheduledTime.difference(now);
+//   Duration delay = scheduledTime.difference(now);
 
-  // Schedule the start function to run after the specified delay
-  Future.delayed(delay, () {
-    checkAndExecuteOrNot; // Call the start function
-  });
-}
+//   // Schedule the start function to run after the specified delay
+//   Future.delayed(delay, () {
+//     checkAndExecuteOrNot; // Call the start function
+//   });
+// }
 
 String formatTimeInput(String input) {
   final RegExp timeRegex = RegExp(r'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$');

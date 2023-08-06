@@ -15,12 +15,11 @@ class AddHost extends StatefulWidget {
 }
 
 class _AddHostState extends State<AddHost> {
-  TimeOfDay _pickedTime = TimeOfDay.now();
+  TimeOfDay pickedTime = TimeOfDay.now();
   String hostId = '';
   String macAddress = '';
   String ipAddress = '';
   String hostName = '';
-  String time = '';
 
 // Prevents multiple instances of AddHost, removes modal
   Future<bool> _handleBackPress() async {
@@ -44,7 +43,7 @@ class _AddHostState extends State<AddHost> {
       hostName = host.hostName;
       ipAddress = host.ipAddress;
       macAddress = host.macAddress;
-      time = host.time;
+      pickedTime = host.pickedTime;
     }
     loadPreferences();
   }
@@ -96,7 +95,7 @@ class _AddHostState extends State<AddHost> {
     String newHostName = hostName;
     String newMacAddress = macAddress;
     String newIpAddress = ipAddress;
-    String newtime = time;
+    TimeOfDay newpickedTime = pickedTime;
 
     if (!_validateHostDetails(newMacAddress, newIpAddress)) {
       // Validation failed, exit the method without saving
@@ -108,14 +107,25 @@ class _AddHostState extends State<AddHost> {
       int existingHostIndex =
           hostProvider.savedHosts.indexWhere((host) => host.hostId == widget.host!.hostId);
       if (existingHostIndex != -1) {
-        Host updatedHost =
-            Host(widget.host!.hostId, newHostName, newIpAddress, newMacAddress, time);
+        Host updatedHost = Host(
+          hostId: widget.host!.hostId,
+          hostName: newHostName,
+          ipAddress: newIpAddress,
+          macAddress: newMacAddress,
+          pickedTime: newpickedTime,
+        );
         hostProvider.savedHosts[existingHostIndex] = updatedHost;
       }
     } else {
       // New host, generate a hostId & save
       String hostId = generateHostId(); // generate hostId
-      Host newHost = Host(hostId, newHostName, newIpAddress, newMacAddress, time);
+      Host newHost = Host(
+        hostId: hostId,
+        hostName: newHostName,
+        ipAddress: newIpAddress,
+        macAddress: newMacAddress,
+        pickedTime: newpickedTime,
+      );
       hostProvider.savedHosts.add(newHost);
     }
     savePreferences();
@@ -125,8 +135,6 @@ class _AddHostState extends State<AddHost> {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     return 'host_$timestamp';
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +146,6 @@ class _AddHostState extends State<AddHost> {
         ),
         body: SingleChildScrollView(
           child: Column(
-            
             children: <Widget>[
               Container(
                 padding: const EdgeInsets.all(20.0),
@@ -176,37 +183,31 @@ class _AddHostState extends State<AddHost> {
               Container(
                 padding: const EdgeInsets.all(20.0),
                 child: TimePickerWidget(
-                  onTimePicked: (TimeOfDay pickedTime) {
+                  onTimePicked: (TimeOfDay newPickedTime) {
                     setState(() {
-                      time = '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
+                      pickedTime = newPickedTime;
                     });
                   },
+                  pickedTime: pickedTime,
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: _wakewake,
-                    child: const Text('Wake! Wake!'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _saveHost();
-                      savePreferences();
-                      // executeWakeFunctionAtTime(
-                      //     Host(hostId, hostName, ipAddress, macAddress, time));
-                    },
-                    child: const Text('Save'),
-                    
-                  ),
-                ],
               ),
             ],
           ),
         ),
+        persistentFooterButtons: [
+          ElevatedButton(
+            onPressed: _wakewake,
+            child: const Text('Wake! Wake!'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              _saveHost();
+              savePreferences();
+            },
+            child: const Text('Save'),
+          ),
+        ],
       ),
     );
   }
 }
-
