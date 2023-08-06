@@ -1,3 +1,5 @@
+import 'package:wakewake/widgets/time_picker.dart';
+
 import '../models/hosts.dart';
 import '../imports.dart';
 import 'host_list.dart';
@@ -13,7 +15,7 @@ class AddHost extends StatefulWidget {
 }
 
 class _AddHostState extends State<AddHost> {
-  final int port = 9;
+  TimeOfDay _pickedTime = TimeOfDay.now();
   String hostId = '';
   String macAddress = '';
   String ipAddress = '';
@@ -124,27 +126,7 @@ class _AddHostState extends State<AddHost> {
     return 'host_$timestamp';
   }
 
-  void executeWakeFunctionAtTime(Host host) {
-    if (host.time == null) {
-      debugPrint('Host does not have a specific time to start.');
-      return;
-    }
-
-    DateTime scheduledTime = DateTime.parse(host.time); // Convert time string to DateTime object
-    DateTime now = DateTime.now();
-
-    if (scheduledTime.isBefore(now)) {
-      debugPrint('Scheduled time is in the past.');
-      return;
-    }
-
-    Duration delay = scheduledTime.difference(now);
-
-    // Schedule the start function to run after the specified delay
-    Future.delayed(delay, () {
-      sendMagicPacket; // Call the start function
-    });
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -156,6 +138,7 @@ class _AddHostState extends State<AddHost> {
         ),
         body: SingleChildScrollView(
           child: Column(
+            
             children: <Widget>[
               Container(
                 padding: const EdgeInsets.all(20.0),
@@ -192,13 +175,12 @@ class _AddHostState extends State<AddHost> {
               ),
               Container(
                 padding: const EdgeInsets.all(20.0),
-                child: TimeTextField(
-                  onChanged: (value) {
+                child: TimePickerWidget(
+                  onTimePicked: (TimeOfDay pickedTime) {
                     setState(() {
-                      time = value;
+                      time = '${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}';
                     });
                   },
-                  time: time,
                 ),
               ),
               Row(
@@ -212,10 +194,11 @@ class _AddHostState extends State<AddHost> {
                     onPressed: () {
                       _saveHost();
                       savePreferences();
-                      executeWakeFunctionAtTime(
-                          Host(hostId, hostName, ipAddress, macAddress, time));
+                      // executeWakeFunctionAtTime(
+                      //     Host(hostId, hostName, ipAddress, macAddress, time));
                     },
                     child: const Text('Save'),
+                    
                   ),
                 ],
               ),
@@ -226,3 +209,4 @@ class _AddHostState extends State<AddHost> {
     );
   }
 }
+

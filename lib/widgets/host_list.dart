@@ -41,10 +41,10 @@ class _HostListState extends State<HostList> {
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'about') {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => About()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => About()),
+                );
               }
             },
             itemBuilder: (context) {

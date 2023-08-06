@@ -140,7 +140,7 @@ void executeWakeFunctionAtTime(Host host) {
 
   // Schedule the start function to run after the specified delay
   Future.delayed(delay, () {
-    sendMagicPacket; // Call the start function
+    checkAndExecuteOrNot; // Call the start function
   });
 }
 
