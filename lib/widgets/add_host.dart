@@ -51,7 +51,7 @@ class _AddHostState extends State<AddHost> {
   bool _validateHostDetails(String macAddress, String ipAddress) {
     if (macAddress.trim().replaceAll(":", "").length != 12) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Provide a valid MAC address (17 characters withdots).')),
+        const SnackBar(content: Text('Provide a valid MAC address (17 characters with dots).')),
       );
       return false;
     } else if (ipAddress.trim().isEmpty) {
