@@ -43,6 +43,7 @@ dependencies:
   url_launcher: ^6.1.11
   connectivity_plus: ^4.0.2
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

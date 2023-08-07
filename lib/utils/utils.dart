@@ -144,21 +144,3 @@ String formatIPAddress(TextEditingValue newValue) {
 //   });
 // }
 
-String formatTimeInput(String input) {
-  final RegExp timeRegex = RegExp(r'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$');
-  if (timeRegex.hasMatch(input)) {
-    return input;
-  } else {
-    // Format the input to 'HH:MM' if it doesn't match the required format
-    final String formattedInput = input.replaceAll(RegExp(r'[^0-9:]'), '');
-
-    if (formattedInput.length >= 3) {
-      // Add the ':' after the first two characters
-      final String hours = formattedInput.substring(0, 2);
-      final String minutes = formattedInput.substring(2);
-      return '$hours:$minutes';
-    } else {
-      return formattedInput;
-    }
-  }
-}

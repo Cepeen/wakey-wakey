@@ -1,4 +1,4 @@
-import '../imports.dart';
+import 'package:flutter/material.dart';
 
 class TimePickerWidget extends StatefulWidget {
   final Function(TimeOfDay) onTimePicked;
@@ -16,6 +16,7 @@ class TimePickerWidget extends StatefulWidget {
 
 class TimePickerWidgetState extends State<TimePickerWidget> {
   TimeOfDay _selectedTime = TimeOfDay.now(); // Initialize with the current time
+  bool _runOnTime = false; // Initialize the checkbox value
 
   @override
   void initState() {
@@ -25,9 +26,22 @@ class TimePickerWidgetState extends State<TimePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return Card(
+      // Wrap the widget with a Card
+      elevation: 4,
       child: ListTile(
+        leading: Checkbox(
+          value: _runOnTime,
+          onChanged: (value) {
+            setState(() {
+              _runOnTime = value!;
+            });
+            // Call your function here, replace 'anyFunction' with the actual function you want to call
+            if (_runOnTime) {
+              anyFunction();
+            }
+          },
+        ),
         title: const Text('Run on time'),
         trailing: Text(
           '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}',
@@ -53,5 +67,9 @@ class TimePickerWidgetState extends State<TimePickerWidget> {
         },
       ),
     );
+  }
+
+  void anyFunction() {
+    print("Checkbox is checked");
   }
 }
