@@ -1,13 +1,14 @@
 import '../imports.dart';
 
 class TimePickerWidget extends StatefulWidget {
-  final Function(TimeOfDay) onTimePicked;
+  final Function(TimeOfDay, bool) onTimePicked;
   final TimeOfDay pickedTime; // Add the pickedTime parameter
+
 
   const TimePickerWidget({
     Key? key,
     required this.onTimePicked,
-    required this.pickedTime,
+    required this.pickedTime, required bool isChecked,
   }) : super(key: key);
 
   @override
@@ -39,10 +40,12 @@ class TimePickerWidgetState extends State<TimePickerWidget> {
           },
         ),
         title: const Text('Run on time'),
-        trailing: Text(
-          '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}',
-          style: const TextStyle(fontSize: 16),
-        ),
+        trailing: isChecked
+            ? Text(
+                '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}',
+                style: const TextStyle(fontSize: 16),
+              )
+            : null, // Display null if checkbox is not checked
         onTap: () async {
           TimeOfDay? pickedTime = await showTimePicker(
             context: context,
@@ -58,7 +61,7 @@ class TimePickerWidgetState extends State<TimePickerWidget> {
             setState(() {
               _selectedTime = pickedTime;
             });
-            widget.onTimePicked(pickedTime);
+            widget.onTimePicked(pickedTime, isChecked);
           }
         },
       ),
