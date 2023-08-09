@@ -159,8 +159,30 @@ class _HostListState extends State<HostList> {
               leading: const Icon(Icons.delete),
               title: const Text('Delete'),
               onTap: () {
-                hostProvider.removeHost(hostProvider.savedHosts[index]);
-                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Confirm'),
+                      content: const Text('Are you sure you want to delete this host?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('No'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            hostProvider.removeHost(hostProvider.savedHosts[index]);
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Yes'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
             ),
           ],

@@ -17,6 +17,7 @@ class Host {
     this.isChecked = false, // Initialize with default value
   });
 
+
   Map<String, dynamic> toJson() => {
         'hostId': hostId,
         'hostName': hostName,

@@ -21,7 +21,6 @@ class _AddHostState extends State<AddHost> {
   String macAddress = '';
   String ipAddress = '';
   String hostName = '';
-  bool isChecked = false;
 
   // Prevents multiple instances of AddHost, removes modal
   Future<bool> _handleBackPress() async {
@@ -46,7 +45,6 @@ class _AddHostState extends State<AddHost> {
       ipAddress = host.ipAddress;
       macAddress = host.macAddress;
       pickedTime = host.pickedTime;
-      isChecked = host.isChecked;
     }
     loadPreferences();
   }
@@ -99,7 +97,6 @@ class _AddHostState extends State<AddHost> {
     String newMacAddress = macAddress;
     String newIpAddress = ipAddress;
     TimeOfDay newpickedTime = pickedTime;
-    bool newisChecked = isChecked;
 
     if (!_validateHostDetails(newMacAddress, newIpAddress)) {
       // Validation failed, exit the method without saving
@@ -112,23 +109,25 @@ class _AddHostState extends State<AddHost> {
           hostProvider.savedHosts.indexWhere((host) => host.hostId == widget.host!.hostId);
       if (existingHostIndex != -1) {
         Host updatedHost = Host(
-            hostId: widget.host!.hostId,
-            hostName: newHostName,
-            ipAddress: newIpAddress,
-            macAddress: newMacAddress,
-            pickedTime: newpickedTime,
-            isChecked: newisChecked);
+          hostId: widget.host!.hostId,
+          hostName: newHostName,
+          ipAddress: newIpAddress,
+          macAddress: newMacAddress,
+          pickedTime: newpickedTime,
+          isChecked: widget.host!.isChecked, 
+        );
         hostProvider.savedHosts[existingHostIndex] = updatedHost;
       }
     } else {
       // New host, generate a hostId & save
-      String hostId = generateHostId();
+      String hostId = generateHostId(); // generate hostId
       Host newHost = Host(
         hostId: hostId,
         hostName: newHostName,
         ipAddress: newIpAddress,
         macAddress: newMacAddress,
         pickedTime: newpickedTime,
+        isChecked: false, // default
       );
       hostProvider.savedHosts.add(newHost);
     }
