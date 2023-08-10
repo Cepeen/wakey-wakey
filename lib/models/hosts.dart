@@ -6,7 +6,6 @@ class Host {
   String ipAddress;
   String macAddress;
   TimeOfDay pickedTime;
-  bool isChecked; // New property for checkbox state
 
   Host({
     required this.hostId,
@@ -14,7 +13,6 @@ class Host {
     required this.ipAddress,
     required this.macAddress,
     required this.pickedTime,
-    this.isChecked = false, // Initialize with default value
   });
 
   Map<String, dynamic> toJson() => {
