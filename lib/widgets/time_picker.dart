@@ -1,12 +1,5 @@
 import 'package:flutter/material.dart';
 
-class TimeWithCheck {
-  final TimeOfDay time;
-  final int isChecked;
-
-  TimeWithCheck(this.time, this.isChecked);
-}
-
 class TimePickerWidget extends StatefulWidget {
   final Function(TimeWithCheck) onTimePicked;
   final TimeWithCheck pickedTime;
@@ -73,4 +66,11 @@ class TimePickerWidgetState extends State<TimePickerWidget> {
       ),
     );
   }
+}
+
+class TimeWithCheck {
+  final TimeOfDay time;
+  final int isChecked;
+
+  TimeWithCheck(this.time, this.isChecked);
 }

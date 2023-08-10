@@ -121,26 +121,3 @@ String formatIPAddress(TextEditingValue newValue) {
   var string = buffer.toString();
   return string;
 }
-
-// void executeWakeFunctionAtTime(Host host) {
-//   if (host.time == null) {
-//     debugPrint('Host does not have a specific time to start.');
-//     return;
-//   }
-
-//   DateTime scheduledTime = DateTime.parse(host.time); // Convert time string to DateTime object
-//   DateTime now = DateTime.now();
-
-//   if (scheduledTime.isBefore(now)) {
-//     debugPrint('Scheduled time is in the past.');
-//     return;
-//   }
-
-//   Duration delay = scheduledTime.difference(now);
-
-//   // Schedule the start function to run after the specified delay
-//   Future.delayed(delay, () {
-//     checkAndExecuteOrNot; // Call the start function
-//   });
-// }
-
