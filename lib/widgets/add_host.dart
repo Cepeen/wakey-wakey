@@ -16,6 +16,8 @@ class AddHost extends StatefulWidget {
 
 class _AddHostState extends State<AddHost> {
   TimeOfDay pickedTime = TimeOfDay.now();
+  final int port = 9;
+  int isChecked = 0;
   String hostId = '';
   String macAddress = '';
   String ipAddress = '';
@@ -44,6 +46,7 @@ class _AddHostState extends State<AddHost> {
       ipAddress = host.ipAddress;
       macAddress = host.macAddress;
       pickedTime = host.pickedTime;
+      isChecked = host.isChecked;
     }
     loadPreferences();
   }
@@ -83,6 +86,12 @@ class _AddHostState extends State<AddHost> {
     hostProvider.savedHosts = hostList.map((item) => Host.fromJson(jsonDecode(item))).toList();
   }
 
+ void updateIsChecked(int newValue) {
+    setState(() {
+      isChecked = newValue;
+    });
+  }
+
   void _wakewake() {
     if (_validateHostDetails(macAddress, ipAddress)) {
       // Host details are valid, execute the magic packet sending function
@@ -96,6 +105,7 @@ class _AddHostState extends State<AddHost> {
     String newMacAddress = macAddress;
     String newIpAddress = ipAddress;
     TimeOfDay newpickedTime = pickedTime;
+    int newisChecked = isChecked;
 
     if (!_validateHostDetails(newMacAddress, newIpAddress)) {
       // Validation failed, exit the method without saving
@@ -113,6 +123,7 @@ class _AddHostState extends State<AddHost> {
           ipAddress: newIpAddress,
           macAddress: newMacAddress,
           pickedTime: newpickedTime,
+          isChecked: newisChecked,
         );
         hostProvider.savedHosts[existingHostIndex] = updatedHost;
       }
@@ -125,6 +136,7 @@ class _AddHostState extends State<AddHost> {
         ipAddress: newIpAddress,
         macAddress: newMacAddress,
         pickedTime: newpickedTime,
+        isChecked: isChecked,
       );
       hostProvider.savedHosts.add(newHost);
     }
@@ -183,13 +195,15 @@ class _AddHostState extends State<AddHost> {
               Container(
                 padding: const EdgeInsets.all(20.0),
                 child: TimePickerWidget(
-                  onTimePicked: (TimeOfDay newPickedTime) {
-                    setState(() {
-                      pickedTime = newPickedTime;
-                    });
-                  },
-                  pickedTime: pickedTime,
-                ),
+  onTimePicked: (TimeWithCheck newTimeWithCheck) {
+    setState(() {
+      pickedTime = newTimeWithCheck.time;
+      isChecked = newTimeWithCheck.isChecked;
+    });
+  },
+  pickedTime: TimeWithCheck(pickedTime, isChecked),
+),
+
               ),
             ],
           ),

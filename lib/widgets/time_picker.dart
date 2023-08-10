@@ -1,8 +1,15 @@
-import '../imports.dart';
+import 'package:flutter/material.dart';
+
+class TimeWithCheck {
+  final TimeOfDay time;
+  final int isChecked;
+
+  TimeWithCheck(this.time, this.isChecked);
+}
 
 class TimePickerWidget extends StatefulWidget {
-  final Function(TimeOfDay) onTimePicked;
-  final TimeOfDay pickedTime; // Add the pickedTime parameter
+  final Function(TimeWithCheck) onTimePicked;
+  final TimeWithCheck pickedTime;
 
   const TimePickerWidget({
     Key? key,
@@ -15,15 +22,13 @@ class TimePickerWidget extends StatefulWidget {
 }
 
 class TimePickerWidgetState extends State<TimePickerWidget> {
-  TimeOfDay _selectedTime = TimeOfDay.now(); // Initialize with the current time
+  TimeWithCheck _selectedTimeWithCheck = TimeWithCheck(TimeOfDay.now(), 0);
 
   @override
   void initState() {
     super.initState();
-    _selectedTime = widget.pickedTime; // Set the initial selected time from the Host object
+    _selectedTimeWithCheck = widget.pickedTime;
   }
-
-  bool isChecked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,22 +36,26 @@ class TimePickerWidgetState extends State<TimePickerWidget> {
       padding: const EdgeInsets.all(8.0),
       child: ListTile(
         leading: Checkbox(
-          value: isChecked,
-          onChanged: (bool? value) {
+          value: _selectedTimeWithCheck.isChecked == 1,
+          onChanged: (bool? newValue) {
             setState(() {
-              isChecked = value!;
+              _selectedTimeWithCheck = TimeWithCheck(
+                _selectedTimeWithCheck.time,
+                newValue! ? 1 : 0,
+              );
             });
+            widget.onTimePicked(_selectedTimeWithCheck);
           },
         ),
         title: const Text('Run on time'),
         trailing: Text(
-          '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}',
+          '${_selectedTimeWithCheck.time.hour.toString().padLeft(2, '0')}:${_selectedTimeWithCheck.time.minute.toString().padLeft(2, '0')}',
           style: const TextStyle(fontSize: 16),
         ),
         onTap: () async {
           TimeOfDay? pickedTime = await showTimePicker(
             context: context,
-            initialTime: _selectedTime,
+            initialTime: _selectedTimeWithCheck.time,
             builder: (BuildContext context, Widget? child) {
               return MediaQuery(
                 data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
@@ -56,9 +65,9 @@ class TimePickerWidgetState extends State<TimePickerWidget> {
           );
           if (pickedTime != null) {
             setState(() {
-              _selectedTime = pickedTime;
+              _selectedTimeWithCheck = TimeWithCheck(pickedTime, _selectedTimeWithCheck.isChecked);
             });
-            widget.onTimePicked(pickedTime);
+            widget.onTimePicked(_selectedTimeWithCheck);
           }
         },
       ),
