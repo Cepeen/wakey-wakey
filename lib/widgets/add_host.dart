@@ -16,7 +16,6 @@ class AddHost extends StatefulWidget {
 
 class _AddHostState extends State<AddHost> {
   TimeOfDay pickedTime = TimeOfDay.now();
-  final int port = 9;
   String hostId = '';
   String macAddress = '';
   String ipAddress = '';
