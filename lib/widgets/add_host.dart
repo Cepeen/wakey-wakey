@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:wakewake/widgets/time_picker.dart';
 
 import '../models/hosts.dart';
@@ -15,6 +17,7 @@ class AddHost extends StatefulWidget {
 }
 
 class _AddHostState extends State<AddHost> {
+  Timer? _magicPacketTimer; // Declare the Timer object
   TimeOfDay pickedTime = TimeOfDay.now();
   final int port = 9;
   int isChecked = 0;
@@ -86,7 +89,7 @@ class _AddHostState extends State<AddHost> {
     hostProvider.savedHosts = hostList.map((item) => Host.fromJson(jsonDecode(item))).toList();
   }
 
- void updateIsChecked(int newValue) {
+  void updateIsChecked(int newValue) {
     setState(() {
       isChecked = newValue;
     });
@@ -126,6 +129,11 @@ class _AddHostState extends State<AddHost> {
           isChecked: newisChecked,
         );
         hostProvider.savedHosts[existingHostIndex] = updatedHost;
+
+        if (newisChecked == 1) {
+          TimeOfDay executeTime = newpickedTime; // Pobierz czas z obiektu Host
+          _scheduleExecution(executeTime, newMacAddress, newIpAddress);
+        }
       }
     } else {
       // New host, generate a hostId & save
@@ -141,6 +149,22 @@ class _AddHostState extends State<AddHost> {
       hostProvider.savedHosts.add(newHost);
     }
     savePreferences();
+  }
+
+  void _scheduleExecution(TimeOfDay executeTime, String macAddress, String ipAddress) {
+    final now = TimeOfDay.now();
+    final currentTime = Duration(hours: now.hour, minutes: now.minute);
+    final scheduledTime = Duration(hours: executeTime.hour, minutes: executeTime.minute);
+
+    if (scheduledTime > currentTime) {
+      final delay = scheduledTime - currentTime;
+      Future.delayed(delay, () {
+        checkAndExecuteOrNotNE(macAddress, ipAddress);
+      });
+    } else {
+      // If scheduled time is in the past, you might want to handle it accordingly
+      // For example, show a message or perform some other action.
+    }
   }
 
   String generateHostId() {
@@ -195,15 +219,14 @@ class _AddHostState extends State<AddHost> {
               Container(
                 padding: const EdgeInsets.all(20.0),
                 child: TimePickerWidget(
-  onTimePicked: (TimeWithCheck newTimeWithCheck) {
-    setState(() {
-      pickedTime = newTimeWithCheck.time;
-      isChecked = newTimeWithCheck.isChecked;
-    });
-  },
-  pickedTime: TimeWithCheck(pickedTime, isChecked),
-),
-
+                  onTimePicked: (TimeWithCheck newTimeWithCheck) {
+                    setState(() {
+                      pickedTime = newTimeWithCheck.time;
+                      isChecked = newTimeWithCheck.isChecked;
+                    });
+                  },
+                  pickedTime: TimeWithCheck(pickedTime, isChecked),
+                ),
               ),
             ],
           ),
