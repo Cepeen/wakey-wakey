@@ -17,7 +17,6 @@ class AddHost extends StatefulWidget {
 }
 
 class _AddHostState extends State<AddHost> {
-  Timer? _magicPacketTimer; // Declare the Timer object
   TimeOfDay pickedTime = TimeOfDay.now();
   final int port = 9;
   int isChecked = 0;
@@ -25,6 +24,8 @@ class _AddHostState extends State<AddHost> {
   String macAddress = '';
   String ipAddress = '';
   String hostName = '';
+  String? macAddressError;
+  String? ipAddressError;
 
 // Prevents multiple instances of AddHost, removes modal
   Future<bool> _handleBackPress() async {
@@ -55,23 +56,29 @@ class _AddHostState extends State<AddHost> {
   }
 
   bool _validateHostDetails(String macAddress, String ipAddress) {
+    String? ipAddressError;
+    String? macAddressError;
+
     if (macAddress.trim().replaceAll(":", "").length != 12) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Provide a valid MAC address (17 characters with dots).')),
-      );
-      return false;
-    } else if (ipAddress.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('IP and MAC addresses are required.')),
-      );
-      return false;
+      macAddressError = 'Provide a valid MAC address.';
+    }
+
+    if (ipAddress.trim().isEmpty) {
+      ipAddressError = 'IP and MAC addresses are required.';
     } else if (!isIPv4Address32Bit(ipAddress)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please provide a valid 32-bit IP address.')),
-      );
+      ipAddressError = 'Please provide a valid 32-bit IP address.';
+    }
+
+    setState(() {
+      this.ipAddressError = ipAddressError;
+      this.macAddressError = macAddressError;
+    });
+
+    if (ipAddressError == null && macAddressError == null) {
+      return true;
+    } else {
       return false;
     }
-    return true;
   }
 
   Future<void> savePreferences() async {
@@ -161,8 +168,7 @@ class _AddHostState extends State<AddHost> {
       Future.delayed(delay, () {
         checkAndExecuteOrNotNE(macAddress, ipAddress);
       });
-    } else {
-    }
+    } else {}
   }
 
   String generateHostId() {
@@ -201,6 +207,7 @@ class _AddHostState extends State<AddHost> {
                     });
                   },
                   macAddress: macAddress,
+                  errorText: macAddressError,
                 ),
               ),
               Container(
@@ -212,6 +219,7 @@ class _AddHostState extends State<AddHost> {
                     });
                   },
                   ipAddress: ipAddress,
+                  errorText: ipAddressError, 
                 ),
               ),
               Container(

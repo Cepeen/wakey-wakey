@@ -130,3 +130,4 @@ String formatIPAddress(TextEditingValue newValue) {
   var string = buffer.toString();
   return string;
 }
+

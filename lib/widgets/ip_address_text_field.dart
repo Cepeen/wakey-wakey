@@ -3,11 +3,11 @@ import '../imports.dart';
 class IPAddressTextField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final String ipAddress;
+  final String? errorText; 
 
-  const IPAddressTextField({Key? key, this.onChanged, required this.ipAddress}) : super(key: key);
+  const IPAddressTextField({Key? key, this.onChanged, required this.ipAddress, this.errorText}) : super(key: key);
 
   @override
-  
   State<IPAddressTextField> createState() => _IPAddressTextFieldState();
 }
 
@@ -29,20 +29,21 @@ class _IPAddressTextFieldState extends State<IPAddressTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      onChanged: (value) {
-        widget.onChanged?.call(value);
-      },
-      controller: _controller,
-      keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: true),
-      inputFormatters: [
-        MyInputFormatters.ipAddressInputFilter(),
-        LengthLimitingTextInputFormatter(15),
-        _IPAddressInputFormatter(), // Using the custom IP address input formatter
-      ],
-      decoration: const InputDecoration(
-        labelText: 'IP Address',
-      ),
-    );
+  onChanged: (value) {
+    widget.onChanged?.call(value);
+  },
+  controller: _controller,
+  keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: true),
+  inputFormatters: [
+    MyInputFormatters.ipAddressInputFilter(),
+    LengthLimitingTextInputFormatter(15),
+    _IPAddressInputFormatter(), // Using the custom IP address input formatter
+  ],
+  decoration: InputDecoration(
+    labelText: 'IP Address',
+    errorText: widget.errorText, 
+  ),
+);
   }
 }
 
