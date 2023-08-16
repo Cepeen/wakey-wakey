@@ -42,6 +42,7 @@ dependencies:
   package_info_plus: ^4.0.2
   url_launcher: ^6.1.11
   connectivity_plus: ^4.0.2
+  flutter_background_service: ^5.0.1
 
 
 dev_dependencies:

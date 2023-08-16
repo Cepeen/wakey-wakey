@@ -162,8 +162,6 @@ class _AddHostState extends State<AddHost> {
         checkAndExecuteOrNotNE(macAddress, ipAddress);
       });
     } else {
-      // If scheduled time is in the past, you might want to handle it accordingly
-      // For example, show a message or perform some other action.
     }
   }
 
