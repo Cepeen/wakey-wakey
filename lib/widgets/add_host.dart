@@ -1,10 +1,9 @@
-import 'dart:async';
-
 import 'package:wakewake/widgets/time_picker.dart';
 
-import '../models/hosts.dart';
 import '../imports.dart';
+import '../models/hosts.dart';
 import 'host_list.dart';
+import 'host_validator.dart';
 
 class AddHost extends StatefulWidget {
   const AddHost({Key? key, required this.title, this.host}) : super(key: key);
@@ -17,6 +16,7 @@ class AddHost extends StatefulWidget {
 }
 
 class _AddHostState extends State<AddHost> {
+  late SharedPreferences prefs;
   TimeOfDay pickedTime = TimeOfDay.now();
   final int port = 9;
   int isChecked = 0;
@@ -27,7 +27,6 @@ class _AddHostState extends State<AddHost> {
   String? macAddressError;
   String? ipAddressError;
 
-// Prevents multiple instances of AddHost, removes modal
   Future<bool> _handleBackPress() async {
     Navigator.pushAndRemoveUntil(
       context,
@@ -44,6 +43,7 @@ class _AddHostState extends State<AddHost> {
   @override
   void initState() {
     super.initState();
+    initializePreferences();
     if (widget.host != null) {
       final host = widget.host!;
       hostName = host.hostName;
@@ -52,48 +52,22 @@ class _AddHostState extends State<AddHost> {
       pickedTime = host.pickedTime;
       isChecked = host.isChecked;
     }
-    loadPreferences();
+  }
+
+  Future<void> initializePreferences() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   bool _validateHostDetails(String macAddress, String ipAddress) {
-    String? ipAddressError;
-    String? macAddressError;
-
-    if (macAddress.trim().replaceAll(":", "").length != 12) {
-      macAddressError = 'Provide a valid MAC address.';
-    }
-
-    if (ipAddress.trim().isEmpty) {
-      ipAddressError = 'IP and MAC addresses are required.';
-    } else if (!isIPv4Address32Bit(ipAddress)) {
-      ipAddressError = 'Please provide a valid 32-bit IP address.';
-    }
+    macAddressError = HostValidator.validateMacAddress(macAddress);
+    ipAddressError = HostValidator.validateIpAddress(ipAddress);
 
     setState(() {
-      this.ipAddressError = ipAddressError;
-      this.macAddressError = macAddressError;
+      ipAddressError = ipAddressError;
+      macAddressError = macAddressError;
     });
 
-    if (ipAddressError == null && macAddressError == null) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Future<void> savePreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final hostProvider = context.read<HostListProvider>();
-    List<String> hostList =
-        hostProvider.savedHosts.map((host) => jsonEncode(host.toJson())).toList();
-    prefs.setStringList('hosts', hostList);
-  }
-
-  Future<void> loadPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final hostProvider = context.read<HostListProvider>();
-    List<String> hostList = prefs.getStringList('hosts') ?? [];
-    hostProvider.savedHosts = hostList.map((item) => Host.fromJson(jsonDecode(item))).toList();
+    return ipAddressError == null && macAddressError == null;
   }
 
   void updateIsChecked(int newValue) {
@@ -104,13 +78,11 @@ class _AddHostState extends State<AddHost> {
 
   void _wakewake() {
     if (_validateHostDetails(macAddress, ipAddress)) {
-      // Host details are valid, execute the magic packet sending function
       checkAndExecuteOrNot(macAddress, ipAddress, context);
     }
   }
 
   void _saveHost() {
-    // Extract host details from text fields
     String newHostName = hostName;
     String newMacAddress = macAddress;
     String newIpAddress = ipAddress;
@@ -118,7 +90,6 @@ class _AddHostState extends State<AddHost> {
     int newisChecked = isChecked;
 
     if (!_validateHostDetails(newMacAddress, newIpAddress)) {
-      // Validation failed, exit the method without saving
       return;
     }
 
@@ -138,13 +109,12 @@ class _AddHostState extends State<AddHost> {
         hostProvider.savedHosts[existingHostIndex] = updatedHost;
 
         if (newisChecked == 1) {
-          TimeOfDay executeTime = newpickedTime; // Pobierz czas z obiektu Host
+          TimeOfDay executeTime = newpickedTime;
           _scheduleExecution(executeTime, newMacAddress, newIpAddress);
         }
       }
     } else {
-      // New host, generate a hostId & save
-      String hostId = generateHostId(); // generate hostId
+      String hostId = generateHostId();
       Host newHost = Host(
         hostId: hostId,
         hostName: newHostName,
@@ -155,7 +125,9 @@ class _AddHostState extends State<AddHost> {
       );
       hostProvider.savedHosts.add(newHost);
     }
-    savePreferences();
+    List<String> hostList =
+        hostProvider.savedHosts.map((host) => jsonEncode(host.toJson())).toList();
+    prefs.setStringList('hosts', hostList);
   }
 
   void _scheduleExecution(TimeOfDay executeTime, String macAddress, String ipAddress) {
@@ -168,7 +140,7 @@ class _AddHostState extends State<AddHost> {
       Future.delayed(delay, () {
         checkAndExecuteOrNotNE(macAddress, ipAddress);
       });
-    } else {}
+    }
   }
 
   String generateHostId() {
@@ -219,7 +191,7 @@ class _AddHostState extends State<AddHost> {
                     });
                   },
                   ipAddress: ipAddress,
-                  errorText: ipAddressError, 
+                  errorText: ipAddressError,
                 ),
               ),
               Container(
@@ -245,7 +217,6 @@ class _AddHostState extends State<AddHost> {
           ElevatedButton(
             onPressed: () {
               _saveHost();
-              savePreferences();
             },
             child: const Text('Save'),
           ),

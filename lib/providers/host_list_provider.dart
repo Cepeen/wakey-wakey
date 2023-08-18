@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/hosts.dart';
 
-
 class HostListProvider extends ChangeNotifier {
   List<Host> savedHosts = [];
 
@@ -14,7 +13,7 @@ class HostListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
- Future<void> loadPreferences() async {
+  Future<void> loadPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> hostList = prefs.getStringList('hosts') ?? [];
     savedHosts = hostList.map((item) => Host.fromJson(jsonDecode(item))).toList();
@@ -27,4 +26,3 @@ class HostListProvider extends ChangeNotifier {
     prefs.setStringList('hosts', hostList);
   }
 }
-

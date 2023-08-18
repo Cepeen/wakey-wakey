@@ -1,6 +1,5 @@
 import 'dart:io';
 import '../imports.dart';
-import '../models/hosts.dart';
 
 void sendMagicPacket(String macAddress, String ipAddress) {
   final List<int> macBytes = macAddress.split(':').map((e) => int.parse(e, radix: 16)).toList();
@@ -130,4 +129,3 @@ String formatIPAddress(TextEditingValue newValue) {
   var string = buffer.toString();
   return string;
 }
-
