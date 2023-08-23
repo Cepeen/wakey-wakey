@@ -23,7 +23,7 @@ class Host {
         'ipAddress': ipAddress,
         'macAddress': macAddress,
         'time': '${pickedTime.hour}:${pickedTime.minute}',
-        'isChecked': isChecked, // Include the new property in the JSON serialization
+        'isChecked': isChecked, 
       };
 
   factory Host.fromJson(Map<String, dynamic> json) => Host(
@@ -35,6 +35,6 @@ class Host {
           hour: int.parse(json['time'].split(':')[0]),
           minute: int.parse(json['time'].split(':')[1]),
         ),
-        isChecked: json['isChecked'] ?? 0, // Include the new property in the JSON deserialization
+        isChecked: json['isChecked'] ?? 0, 
       );
 }

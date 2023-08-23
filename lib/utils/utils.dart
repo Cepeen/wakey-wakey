@@ -64,7 +64,7 @@ void checkAndExecuteOrNotNE(String macAddress, String ipAddress) async {
   if (connectivityResult == ConnectivityResult.mobile ||
       connectivityResult == ConnectivityResult.wifi) {
     sendMagicPacket(macAddress, ipAddress);
-  } else {}
+  }
 }
 
 String formatMacAddress(String input) {
