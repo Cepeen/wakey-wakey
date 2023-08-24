@@ -58,6 +58,15 @@ void checkAndExecuteOrNot(String macAddress, String ipAddress, BuildContext cont
   }
 }
 
+void checkAndExecuteOrNotNE(String macAddress, String ipAddress) async {
+  final connectivityResult = await Connectivity().checkConnectivity();
+
+  if (connectivityResult == ConnectivityResult.mobile ||
+      connectivityResult == ConnectivityResult.wifi) {
+    sendMagicPacket(macAddress, ipAddress);
+  }
+}
+
 String formatMacAddress(String input) {
   final sanitizedInput = input.replaceAll(":", "");
   if (sanitizedInput.length != 12) {

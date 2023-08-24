@@ -21,7 +21,6 @@ class _HostListState extends State<HostList> {
     final hostProvider = context.watch<HostListProvider>();
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: const Text('Hosts List'),
         actions: [
           IconButton(
@@ -42,10 +41,10 @@ class _HostListState extends State<HostList> {
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'about') {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => About()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => About()),
+                );
               }
             },
             itemBuilder: (context) {
@@ -63,7 +62,7 @@ class _HostListState extends State<HostList> {
         future: _loadHostsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           } else {
@@ -71,22 +70,57 @@ class _HostListState extends State<HostList> {
               itemCount: hostProvider.savedHosts.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
-                  onTap: () {
-                    checkAndExecuteOrNot(hostProvider.savedHosts[index].macAddress,
-                        hostProvider.savedHosts[index].ipAddress, context);
-                  },
-                  onLongPress: () {
-                    _showContextMenu(context, index);
-                  },
-                  child: Card(
-                    child: ListTile(
-                      title: Text(hostProvider.savedHosts[index].hostName),
-                      subtitle: Text(
-                        'IP: ${hostProvider.savedHosts[index].ipAddress}, MAC: ${hostProvider.savedHosts[index].macAddress}',
-                      ),
-                    ),
-                  ),
-                );
+                    onTap: () {
+                      checkAndExecuteOrNot(hostProvider.savedHosts[index].macAddress,
+                          hostProvider.savedHosts[index].ipAddress, context);
+                    },
+                    onLongPress: () {
+                      _showContextMenu(context, index);
+                    },
+                    child: Card(
+                      child: ListTile(
+                          leading: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 8), // Adjust the spacing as needed
+                              Text(
+                                hostProvider.savedHosts[index].hostName,
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'IP: ${hostProvider.savedHosts[index].ipAddress}',
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                    Text(
+                                      'MAC: ${hostProvider.savedHosts[index].macAddress}',
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                              ]),
+                          trailing: Text(
+                            hostProvider.savedHosts[index].pickedTime.format(context),
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          onTap: () {
+                            checkAndExecuteOrNot(hostProvider.savedHosts[index].macAddress,
+                                hostProvider.savedHosts[index].ipAddress, context);
+                          },
+                          onLongPress: () {
+                            _showContextMenu(context, index);
+                          }),
+                    ));
               },
             );
           }
@@ -123,8 +157,30 @@ class _HostListState extends State<HostList> {
               leading: const Icon(Icons.delete),
               title: const Text('Delete'),
               onTap: () {
-                hostProvider.removeHost(hostProvider.savedHosts[index]);
-                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Confirm'),
+                      content: const Text('Are you sure you want to delete this host?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('No'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            hostProvider.removeHost(hostProvider.savedHosts[index]);
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Yes'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
             ),
           ],

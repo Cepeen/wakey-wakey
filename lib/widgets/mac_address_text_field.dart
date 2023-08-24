@@ -1,12 +1,13 @@
 import '../imports.dart';
 
-
 class MacAddressTextField extends StatefulWidget {
-  const MacAddressTextField({Key? key, required this.onChanged, required this.macAddress})
+  const MacAddressTextField(
+      {Key? key, required this.onChanged, required this.macAddress, required this.errorText})
       : super(key: key);
 
   final ValueChanged<String> onChanged;
   final String macAddress;
+  final String? errorText;
 
   @override
   State<MacAddressTextField> createState() => _MacAddressTextFieldState();
@@ -27,11 +28,13 @@ class _MacAddressTextFieldState extends State<MacAddressTextField> {
       ),
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'[a-fA-F0-9-]')),
+        LengthLimitingTextInputFormatter(12),
         _MacAddressInputFormatter(),
       ],
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: 'MAC Address',
-      ),   
+        errorText: widget.errorText,
+      ),
       maxLength: 17, // Maximum length of the MAC address with colons.
       maxLengthEnforcement: MaxLengthEnforcement.enforced,
     );
@@ -51,4 +54,3 @@ class _MacAddressInputFormatter extends TextInputFormatter {
     );
   }
 }
-
