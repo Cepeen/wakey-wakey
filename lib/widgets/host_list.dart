@@ -109,10 +109,12 @@ class _HostListState extends State<HostList> {
                                   ],
                                 ),
                               ]),
-                          trailing: Text(
-                            hostProvider.savedHosts[index].pickedTime.format(context),
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
+                          trailing: hostProvider.savedHosts[index].isChecked == 1
+                              ? Text(
+                                  hostProvider.savedHosts[index].pickedTime.format(context),
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                )
+                              : Text("not set"),
                           onTap: () {
                             checkAndExecuteOrNot(hostProvider.savedHosts[index].macAddress,
                                 hostProvider.savedHosts[index].ipAddress, context);
