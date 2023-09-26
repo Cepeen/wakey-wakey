@@ -71,58 +71,60 @@ class _HostListState extends State<HostList> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                     onTap: () {
-                      checkAndExecuteOrNot(hostProvider.savedHosts[index].macAddress,
-                          hostProvider.savedHosts[index].ipAddress, context);
+                      checkAndExecuteOrNot(
+                        hostProvider.savedHosts[index].macAddress,
+                        hostProvider.savedHosts[index].ipAddress,
+                        context,
+                      );
                     },
                     onLongPress: () {
                       _showContextMenu(context, index);
                     },
                     child: Card(
-                      child: ListTile(
-                          leading: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const SizedBox(height: 8), // Adjust the spacing as needed
-                              Text(
-                                hostProvider.savedHosts[index].hostName,
+                        child: Row(children: [
+                      SizedBox(
+                        width: 100,
+                        height: 50, // Set the width for the Name column
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 8),
+                            Text(
+                              hostProvider.savedHosts[index].hostName,
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 190,
+                        // Set the width for the Details column
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'IP: ${hostProvider.savedHosts[index].ipAddress}',
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                            Text(
+                              'MAC: ${hostProvider.savedHosts[index].macAddress}',
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 80, // Set the width for the Schedule column
+                        child: hostProvider.savedHosts[index].isChecked == 1
+                            ? Text(
+                                hostProvider.savedHosts[index].pickedTime.format(context),
                                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'IP: ${hostProvider.savedHosts[index].ipAddress}',
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                    Text(
-                                      'MAC: ${hostProvider.savedHosts[index].macAddress}',
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-                              ]),
-                          trailing: hostProvider.savedHosts[index].isChecked == 1
-                              ? Text(
-                                  hostProvider.savedHosts[index].pickedTime.format(context),
-                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                )
-                              : Text("not set"),
-                          onTap: () {
-                            checkAndExecuteOrNot(hostProvider.savedHosts[index].macAddress,
-                                hostProvider.savedHosts[index].ipAddress, context);
-                          },
-                          onLongPress: () {
-                            _showContextMenu(context, index);
-                          }),
-                    ));
+                              )
+                            : const Text("not set"),
+                      )
+                    ])));
               },
             );
           }
