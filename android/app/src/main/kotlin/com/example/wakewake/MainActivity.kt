@@ -1,4 +1,4 @@
-package com.example.wakewake
+package com.example.wakeywakey
 
 import io.flutter.embedding.android.FlutterActivity
 

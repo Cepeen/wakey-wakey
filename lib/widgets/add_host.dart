@@ -1,4 +1,4 @@
-import 'package:wakewake/widgets/time_picker.dart';
+import 'package:wakeywakey/widgets/time_picker.dart';
 
 import '../imports.dart';
 import '../models/hosts.dart';
@@ -76,7 +76,7 @@ class _AddHostState extends State<AddHost> {
     });
   }
 
-  void _wakewake() {
+  void _wakeywakey() {
     if (_validateHostDetails(macAddress, ipAddress)) {
       checkAndExecuteOrNot(macAddress, ipAddress, context);
     }
@@ -211,7 +211,7 @@ class _AddHostState extends State<AddHost> {
         ),
         persistentFooterButtons: [
           ElevatedButton(
-            onPressed: _wakewake,
+            onPressed: _wakeywakey,
             child: const Text('Wake! Wake!'),
           ),
           ElevatedButton(

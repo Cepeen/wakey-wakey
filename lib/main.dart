@@ -5,18 +5,18 @@ void main() {
   runApp(
     ChangeNotifierProvider(
       create: (context) => HostListProvider(),
-      child: const WakeWake(),
+      child: const wakeywakey(),
     ),
   );
 }
 
-class WakeWake extends StatelessWidget {
-  const WakeWake({Key? key}) : super(key: key);
+class wakeywakey extends StatelessWidget {
+  const wakeywakey({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Wake! Wake!',
+      title: 'Wakey! Wakey!',
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
