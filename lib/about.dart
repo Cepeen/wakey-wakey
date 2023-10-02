@@ -66,19 +66,19 @@ class _AboutState extends State<About> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Card(
-                        color: Colors.grey[300],
+                        color: Colors.grey[600],
                         child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10.0),
                             child: RichText(
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
-                                    text: 'Wake! Wake! version: $_version\n',
+                                    text: 'Wakey! Wakey! version: $_version\n',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.normal,
                                     ),
                                     children: <TextSpan>[
                                       const TextSpan(
-                                          text: '\nWakey-wakey is aplication created in'),
+                                          text: '\nWakey! Wakey! is aplication created in'),
                                       TextSpan(
                                         text: ' flutter',
                                         style: const TextStyle(color: Colors.blue),

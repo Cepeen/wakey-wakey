@@ -1,4 +1,4 @@
-import 'package:wakeywakey/widgets/time_picker.dart';
+import 'package:wakey_wakey/widgets/time_picker.dart';
 
 import '../imports.dart';
 import '../models/hosts.dart';
