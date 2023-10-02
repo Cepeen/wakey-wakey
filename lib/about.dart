@@ -78,7 +78,7 @@ class _AboutState extends State<About> {
                                     ),
                                     children: <TextSpan>[
                                       const TextSpan(
-                                          text: '\nWake! Wake! is aplication created in'),
+                                          text: '\nWakey-wakey is aplication created in'),
                                       TextSpan(
                                         text: ' flutter',
                                         style: const TextStyle(color: Colors.blue),
