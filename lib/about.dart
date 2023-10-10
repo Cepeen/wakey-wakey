@@ -81,7 +81,7 @@ class _AboutState extends State<About> {
                                           text: '\nWakey! Wakey! is aplication created in'),
                                       TextSpan(
                                         text: ' flutter',
-                                        style: const TextStyle(color: Colors.white),
+                                        style: TextStyle(color: Colors.blue[200]),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () {
                                             showAboutDialog(
@@ -100,7 +100,7 @@ class _AboutState extends State<About> {
                                               ".\n App is totally free and do not contain any advertisements.\n Application do not collect any data.\n As an user of Wake! Wake! you agree with our"),
                                       TextSpan(
                                         text: '\nprivacy policy',
-                                        style: const TextStyle(color: Colors.white),
+                                        style: TextStyle(color: Colors.blue[200]),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () {
                                             _launchURL();
@@ -121,7 +121,7 @@ class _AboutState extends State<About> {
   }
 
   _launchURL() async {
-    const url = ''; //add privacy policy url
+    const url = 'https://www.tomektomasik.pl/apppp'; //add privacy policy url
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);

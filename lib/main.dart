@@ -5,13 +5,13 @@ void main() {
   runApp(
     ChangeNotifierProvider(
       create: (context) => HostListProvider(),
-      child: const Wakeywakey(),
+      child: const wakey_wakey(),
     ),
   );
 }
 
-class Wakeywakey extends StatelessWidget {
-  const Wakeywakey({Key? key}) : super(key: key);
+class wakey_wakey extends StatelessWidget {
+  const wakey_wakey({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

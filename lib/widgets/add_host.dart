@@ -76,7 +76,7 @@ class _AddHostState extends State<AddHost> {
     });
   }
 
-  void _wakeywakey() {
+  void _wakey_wakey() {
     if (_validateHostDetails(macAddress, ipAddress)) {
       checkAndExecuteOrNot(macAddress, ipAddress, context);
     }
@@ -211,7 +211,7 @@ class _AddHostState extends State<AddHost> {
         ),
         persistentFooterButtons: [
           ElevatedButton(
-            onPressed: _wakeywakey,
+            onPressed: _wakey_wakey,
             child: const Text('Wake! Wake!'),
           ),
           ElevatedButton(

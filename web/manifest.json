@@ -1,6 +1,6 @@
 {
-    "name": "wakeywakey",
-    "short_name": "wakeywakey",
+    "name": "wakey_wakey",
+    "short_name": "wakey_wakey",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
