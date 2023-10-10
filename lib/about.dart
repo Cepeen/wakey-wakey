@@ -81,7 +81,7 @@ class _AboutState extends State<About> {
                                           text: '\nWakey! Wakey! is aplication created in'),
                                       TextSpan(
                                         text: ' flutter',
-                                        style: const TextStyle(color: Colors.blue),
+                                        style: const TextStyle(color: Colors.white),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () {
                                             showAboutDialog(
@@ -100,12 +100,21 @@ class _AboutState extends State<About> {
                                               ".\n App is totally free and do not contain any advertisements.\n Application do not collect any data.\n As an user of Wake! Wake! you agree with our"),
                                       TextSpan(
                                         text: '\nprivacy policy',
-                                        style: const TextStyle(color: Colors.blue),
+                                        style: const TextStyle(color: Colors.white),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () {
                                             _launchURL();
                                           },
-                                      )
+                                      ),
+                                      TextSpan(
+                                          text: '\n \n LICENSES',
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) => const LicensePage()));
+                                            })
                                     ]))),
                       )
                     ]))));

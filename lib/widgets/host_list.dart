@@ -43,7 +43,7 @@ class _HostListState extends State<HostList> {
               if (value == 'about') {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => About()),
+                  MaterialPageRoute(builder: (context) => const About()),
                 );
               }
             },
