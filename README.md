@@ -18,10 +18,11 @@ This is a very simple, Flutter project, sending a magic packet to the desired PC
 3. Tap on a host to send a Wake on LAN packet and wake up the device.
 
 ## Screenshots
-
-<img src="https://pxreyoeukohfhvbwcbgd.supabase.co/storage/v1/object/public/app_screenshots/Screenshot2wakey_wakey.jpg?t=2023-10-13T14%3A28%3A01.328Z" alt="Screenshot 2" width="200"/>
-<img src="https://pxreyoeukohfhvbwcbgd.supabase.co/storage/v1/object/public/app_screenshots/Screenshot3wakey_wakey.jpg?t=2023-10-13T14%3A28%3A24.710Z" alt="Screenshot 2" width="200"/>
-<img src="https://pxreyoeukohfhvbwcbgd.supabase.co/storage/v1/object/public/app_screenshots/Screenshot.wakey_wakey.jpg?t=2023-10-13T14%3A27%3A22.744Z" alt="Screenshot 2" width="200"/>
+<div style="display:flex; flex-direction:row;">
+    <img src="https://pxreyoeukohfhvbwcbgd.supabase.co/storage/v1/object/public/app_screenshots/Screenshot2wakey_wakey.jpg?t=2023-10-13T14%3A28%3A01.328Z" alt="Screenshot 2" width="200" style="margin: 5px;">
+    <img src="https://pxreyoeukohfhvbwcbgd.supabase.co/storage/v1/object/public/app_screenshots/Screenshot3wakey_wakey.jpg?t=2023-10-13T14%3A28%3A24.710Z" alt="Screenshot 3" width="200" style="margin: 5px;">
+    <img src="https://pxreyoeukohfhvbwcbgd.supabase.co/storage/v1/object/public/app_screenshots/Screenshot.wakey_wakey.jpg?t=2023-10-13T14%3A27%3A22.744Z" alt="Screenshot 1" width="200" style="margin: 5px;">
+</div>
 
 
 
