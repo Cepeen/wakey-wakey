@@ -49,7 +49,7 @@ void checkAndExecuteOrNot(String macAddress, String ipAddress, BuildContext cont
       connectivityResult == ConnectivityResult.wifi) {
     sendMagicPacket(macAddress, ipAddress);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Wake! Wake! Packet sent!')),
+      const SnackBar(content: Text('Wakey! Wakey! Packet sent!')),
     );
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
