@@ -150,6 +150,7 @@ class _AddHostState extends State<AddHost> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: _handleBackPress,
       child: Scaffold(

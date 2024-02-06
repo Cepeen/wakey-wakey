@@ -26,6 +26,7 @@ This is a very simple, Flutter project, sending a magic packet to the desired PC
 
 
 
+
 ## Installation
 
 1. Clone the repository.
