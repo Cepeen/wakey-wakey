@@ -1,3 +1,4 @@
+import 'package:wakey_wakey/ui/global/theme/app_theme.dart';
 import 'widgets/host_list.dart';
 import 'imports.dart';
 
@@ -14,12 +15,11 @@ class wakey_wakey extends StatelessWidget {
   const wakey_wakey({Key? key}) : super(key: key);
 
   @override
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Wakey! Wakey!',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
-      ),
+      theme: whiteTheme,
       home: const HostList(
         title: 'Host List',
       ),
