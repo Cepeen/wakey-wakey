@@ -15,7 +15,6 @@ class wakey_wakey extends StatelessWidget {
   const wakey_wakey({Key? key}) : super(key: key);
 
   @override
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Wakey! Wakey!',
